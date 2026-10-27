@@ -1,0 +1,6 @@
+{
+  "name": "fixture-sample",
+  "description": "Test fixture for unit and e2e testing",
+  "size": 128,
+  "type": "text/plain"
+}

@@ -1,0 +1,3 @@
+Hurrykit Phase 1 Sample File
+This is a small sample file used for testing browser drag-and-drop and local in-browser file conversions.
+Zero bytes ever leave your device.

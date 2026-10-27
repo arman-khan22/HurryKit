@@ -1,0 +1,1844 @@
+FILE: Hurrykit_?_Phase_1_Implementation_Guide_(Converters).txt LEN: 92507
+Hurrykit ? Phase 1 Implementation Guide (Converters)
+Oct 15, 2026 ? @Arman
+1. Purpose, Scope and Definition of Done
+This guide is the build manual for Phase 1 of Hurrykit: the image, audio and video converters. It assumes the decisions in the Product Vision Document and turns them into things a developer (or a coding agent) can build step by step. It is implementation only; strategy lives in the vision document.
+In scope for Phase 1
+The shared site shell: home page, three department hubs, tool pages, format pages, guides, trust and legal pages.
+The tool registry that drives every page, hub, link and sitemap entry.
+Three engines running in the browser: image (canvas and WebAssembly codecs), audio and video (FFmpeg compiled to WebAssembly).
+About 59 conversion pages across image, audio and video, plus the hubs.
+Basic analytics, error logging, SEO output and a test suite.
+Free hosting and automated deployment.
+Out of scope for Phase 1
+Editing tools (compress, trim, crop and similar; Phase 2).
+Exam-photo tools and Hindi text tools (Phase 3).
+Accounts, payments, ads and any server-side processing.
+A Hindi version of the site.
+Fixed decisions carried in from the vision
+Files are processed on the user's device and never uploaded.
+No signup, no watermark.
+Frontend is React only. The brand name is Hurrykit. The domain is not bought yet, so the build works on a free-host preview address and a configurable site URL.
+Definition of done for Phase 1
+#
+Condition
+How it is checked
+1
+Every Phase 1 page in the per-conversion table works end to end
+The automated end-to-end suite and a manual device pass
+2
+No file bytes leave the browser
+An automated test that fails if any network request carries file data
+3
+Pages meet the SEO bar
+Checklist script: unique title, description, H1, canonical, 250+ words, FAQ
+4
+Works on current Chrome, Edge, Firefox and Safari (desktop), Chrome on Android and Safari on iOS
+The compatibility matrix in section 20
+5
+Mid-range phone loads a tool page quickly and stays responsive during a conversion
+Section 15 budgets
+6
+Large files fail gracefully with a clear message, never a blank screen
+Edge-case tests in section 16
+7
+Privacy, terms, cookie, about and contact pages are live
+Manual check
+8
+Deploys automatically from the main branch, with preview deploys per change
+Section 21
+9
+Licences of every bundled library are recorded
+Section 19
+How to read this guide. Sections 2 to 7 explain the architecture. Sections 8 to 12 cover the engines and every conversion. Sections 13 to 15 cover the interface and performance. Sections 16 to 21 cover edge cases, search, privacy, security, testing and hosting. Section 22 is the build order, 23 the open questions to verify, and 24 the code skeletons.
+Verification rule. Library versions, size limits and browser behaviour change. Anything marked verify must be checked against the current official documentation when that step is built, and the result written into the decision log.
+2. Architecture Overview
+Hurrykit Phase 1 is a static website plus three in-browser engines. There is no application server. Pages are built ahead of time into plain files; when a user opens a tool, the browser downloads the engine it needs and does the work locally.
+The layers
+Layer
+What it is
+Runs where
+Content layer
+The tool registry, page copy, format facts, FAQs and guides, stored as typed data and Markdown files in the repository
+Build time
+Page layer
+React pages generated into static HTML, one per URL, by one template
+Build time, then hydrated in the browser
+Tool UI layer
+The drop zone, option panel, queue, progress and results components
+Browser
+Engine layer
+A common interface with three implementations: image, audio and video
+Browser, inside Web Workers
+Delivery layer
+Static hosting, a CDN for the large engine file, cache and security headers
+Hosting provider
+Observability layer
+Privacy-friendly analytics and error logging that never see file contents
+Browser and small endpoints
+How one conversion flows
+The user opens /heic-to-jpg. The static page loads quickly with no engine code.
+The user drops a file. The tool UI checks the type and size against the tool's rules in the registry.
+The UI asks the engine factory for the engine named in the registry. The engine code loads on demand.
+The engine runs in a Web Worker, reports progress, and returns a result as a file object in memory.
+The UI shows the result with size and a download button. The user's file is never sent anywhere.
+The result can be downloaded, previewed or shared, and is cleared from memory when the user leaves or clicks clear.
+Diagram of the flow
+flowchart LR  U[User drops file] --> V[Validate type and size]  V --> F[Engine factory]  F -->|image| IE[Image engine worker]  F -->|audio/video| FE[FFmpeg engine worker]  IE --> R[Result blob in memory]  FE --> R  R --> D[Download button]  IE -. progress .-> UI[Progress bar]  FE -. progress .-> UI
+Design rules
+One template, one registry. Adding a conversion page means adding a record, not writing a page.
+Engines are replaceable. The UI talks to an interface, so a library can be swapped without touching pages.
+Heavy code loads only when needed. The home page and hubs load no engine.
+Every engine runs in a worker so the page stays responsive and cancel works.
+Nothing is stored server-side. Any history or recent files stay in the browser only.
+Fail visibly. Every error path produces a message the user can act on.
+What is deliberately not in Phase 1. No database, no authentication, no queue, no server functions for conversion. The only server-side pieces are static files and, later, small endpoints for error reports.
+3. Technology Decisions
+Frontend is React as requested. The rest is chosen to keep the system simple, free to host and quick to build. Version numbers are starting points; confirm the current stable release when the project is created (verify).
+Area
+Decision
+Why
+Alternative considered
+Framework
+Next.js (React) with static export
+Gives React, file-based routing and build-time page generation for thousands of SEO pages, and exports plain static files that any free host can serve
+Vite with a React prerender plugin (lighter but needs more custom work for routes and SEO)
+Language
+TypeScript (strict)
+The registry and engine interface benefit from types; catches mistakes early
+Plain JavaScript
+Styling
+Tailwind CSS with design tokens as CSS variables
+Fast responsive work, simple light and dark themes
+CSS modules
+State
+Zustand for tool state; React state for local UI
+Small, no boilerplate
+Redux (too heavy)
+Image codecs
+Canvas and OffscreenCanvas for common formats; WebAssembly codecs (the jSquash family) for HEIC, AVIF, JPEG XL-class needs and better encoders (verify the package list)
+Predictable quality and consistent results across browsers
+A single all-in-one library
+HEIC decoding
+A maintained WebAssembly-based decoder (choose between heic-to and heic2any after a test with real iPhone files)
+HEIC is the top-demand image format; library quality varies
+Server-side decode (rejected, breaks the promise)
+Audio and video
+FFmpeg compiled to WebAssembly (@ffmpeg/ffmpeg 0.12 line) with the single-thread core as default
+One engine for nearly every format; multi-thread core is an optional upgrade
+Web Codecs API (browser support is uneven; used later as a fast path)
+Workers
+Dedicated Web Workers, one per engine
+Responsive UI, cancellation by terminating the worker
+Main-thread processing (rejected)
+Content
+MDX or Markdown plus typed frontmatter for page copy and guides
+Writers edit text without touching code
+A headless CMS (not needed)
+Validation
+Zod for the registry and content files
+Build fails if a record is incomplete
+Manual checks
+Search (site)
+A small client-side index built at build time (for example Fuse.js or MiniSearch)
+Works offline and without a server
+Hosted search (cost, privacy)
+Testing
+Vitest for units, Playwright for end-to-end and device-size tests
+Playwright's Chromium is already available in the build environment
+Cypress
+Linting and format
+ESLint, Prettier, TypeScript checks in CI
+Consistency
+None
+Analytics
+Privacy-friendly analytics (for example Plausible-class or Cloudflare Web Analytics)
+No cookies; no consent banner needed in most setups (verify for the chosen tool)
+Google Analytics (heavy, consent needed)
+Error logging
+A small own endpoint or a free-tier service that accepts only error class, tool, browser and version
+Never receives file names or contents
+Sentry with full breadcrumbs (risk of leaking data)
+Hosting
+Cloudflare Pages for the site; Cloudflare R2 or another free object store for the FFmpeg engine file (verify limits)
+Free tier, global CDN, headers file, no non-commercial restriction
+Netlify, GitHub Pages
+CI and CD
+GitHub Actions with preview deployments per branch
+Free for small projects
+Manual deploys
+Package manager
+pnpm
+Fast and disk-efficient
+npm
+Node version
+Current long-term support release
+Stable
+Latest
+Decisions to record in a decision log. Every row above is entered in a file docs/decisions.md with the date, the reason and the version chosen. Changes later are added, not overwritten.
+Rules for adding a dependency
+Check its licence (section 19) and size.
+Prefer a small, maintained package over a large general one.
+Pin the exact version and record it.
+Anything over about 100 KB must be loaded on demand, not in the shared bundle.
+4. Repository Structure
+One repository, one app. Content, code and tests sit together so a single change can update a page, its data and its test.
+hurrykit/?? app/                      Next.js routes (App Router)?  ?? page.tsx               Home?  ?? [slug]/page.tsx        Tool and conversion pages (generateStaticParams)?  ?? formats/[format]/page.tsx?  ?? guides/[slug]/page.tsx?  ?? image-converter/page.tsx   Hubs?  ?? audio-converter/page.tsx?  ?? video-converter/page.tsx?  ?? privacy-promise/page.tsx   Trust and legal pages?  ?? sitemap.ts, robots.ts?  ?? not-found.tsx?? components/?  ?? layout/                Header, Footer, SearchBox, ThemeToggle?  ?? tool/                  DropZone, OptionsPanel, FileQueue, ProgressBar, ResultCard?  ?? content/               Faq, HowItWorks, RelatedTools, Breadcrumbs?? engines/?  ?? types.ts               Engine interface and shared types?  ?? factory.ts             Chooses the engine from a registry record?  ?? image/                 Image engine, worker, codec loaders?  ?? ffmpeg/                FFmpeg engine, worker, command builders?  ?? shared/                Progress, cancel, memory guards, file naming?? registry/?  ?? schema.ts              Zod schema for tool records?  ?? formats.ts             Format facts (extensions, MIME types, notes)?  ?? tools/                 One data file per department?  ?? index.ts               Loads and validates all records?? content/?  ?? tools/                 Markdown copy per tool (intro, why, tips, FAQ)?  ?? formats/               One file per format?  ?? guides/                Guide articles?? lib/                      Utilities (formatting bytes, slugs, feature detection)?? public/?  ?? _headers               Security and cache headers?  ?? _redirects             Alias redirects?  ?? samples/               Tiny test files?? tests/?  ?? unit/?  ?? e2e/?  ?? fixtures/              Sample media files for tests?? scripts/                  Build checks: seo-check, sitemap, no-upload check?? docs/                     decisions.md, compatibility.md, runbook.md?? .github/workflows/        CI and deploy
+Conventions
+File names: lower-case with hyphens for content, PascalCase for React components.
+Imports: use path aliases (@/engines, @/registry).
+One component, one job. Components that need engine code import it through the factory and never directly.
+No engine imports in shared layout code. A check in CI fails if the home page bundle contains engine code.
+Content and code are separate. Copy lives in content/, not inside components.
+Environment variables are listed in a documented .env.example. The site URL and analytics IDs are variables so the domain can change later without code edits.
+Branching. The main branch is always deployable. Work happens on short branches; every branch gets a preview deployment; merging runs the full test suite.
+5. Tool Registry and Data Model
+The registry is the single source of truth. Every page, hub, link, sitemap entry and search result is generated from it.
+Tool record
+Field
+Type
+Meaning
+id
+string
+Stable internal ID, for example heic-to-jpg
+slug
+string
+URL path, usually the same as id
+kind
+convert
+Phase 1 has only converters
+department
+image, audio or video
+Decides the hub and the colour theme
+from
+list of format IDs
+Accepted input formats
+to
+format ID
+Output format
+engine
+image, ffmpeg
+Which engine does the work
+strategy
+string
+The named method inside the engine (for example heic-decode-canvas-encode, ffmpeg-transcode, ffmpeg-remux)
+options
+list
+User options with defaults (quality, bitrate, resolution and so on)
+limits
+object
+Maximum file size, soft warning size, maximum batch count
+seo
+object
+Primary phrase, title, description, related phrases
+contentRef
+string
+Path to the Markdown copy
+related
+list of tool IDs
+Hand-picked related tools
+wave
+number
+SEO wave (1, 2, 3)
+status
+draft, ready, live
+Only live goes into the sitemap
+notes
+string
+Developer notes (known browser issues)
+Format record
+Field
+Meaning
+id, name, extensions
+For example heic, "HEIC", .heic, .heif
+mime
+MIME types to accept and to label output
+kind
+image, audio or video
+lossy
+Whether the format is lossy
+canRead, canWrite
+Which engines can decode and encode it
+notes
+Support notes and quirks
+contentRef
+Format page copy
+Option record
+Each option has an ID, label, type (select, slider, toggle), choices or range, default value and a help line. Options are rendered by one generic component, so a new option needs no new UI code.
+Example (illustrative)
+{  id: 'heic-to-jpg', slug: 'heic-to-jpg', kind: 'convert', department: 'image',  from: ['heic', 'heif'], to: 'jpg', engine: 'image', strategy: 'heic-decode-canvas-encode',  options: [{ id: 'quality', label: 'Quality', type: 'slider', min: 50, max: 100, default: 90 }],  limits: { maxBytes: 100_000_000, warnBytes: 40_000_000, maxFiles: 50 },  seo: { primary: 'heic to jpg', title: 'HEIC to JPG Converter, Free and Private', description: 'Convert iPhone HEIC photos to JPG in your browser. Nothing is uploaded.' },  contentRef: 'tools/heic-to-jpg.md', related: ['jpg-to-png','heic-to-png'], wave: 1, status: 'ready'}
+Generation rules
+Pairs are generated, not typed. A department file lists the allowed (from, to) pairs and a few overrides; a function builds the records and fills defaults from the format table.
+Validation at build time. Zod checks every record. The build fails on a missing format, a missing content file, a duplicate slug, a copy under the minimum word count or an unknown related ID.
+Derived pages. The registry produces the hub lists, the related-tools lists, the format pages' "all conversions" lists, the sitemap and the site search index.
+Status gates publishing. Only live records appear in navigation and the sitemap; ready and draft appear only in preview builds.
+Content per record. Each tool record must reference a Markdown file with these fields: intro, why-people-convert, format-facts, tips-and-limits, and three to six FAQs.
+6. Routing, Page Template and Content Model
+Routes
+Route
+Source
+Built by
+/
+Home page component
+Static
+/image-converter, /audio-converter, /video-converter
+Hub component, filtered by department
+Static
+/{slug}
+Tool template, one per live record
+generateStaticParams from the registry
+/formats/{format}
+Format template
+generateStaticParams from the format table
+/guides/{slug}
+Guide template
+From Markdown files
+/privacy-promise, /about, /contact, /privacy, /terms, /cookies
+Plain pages
+Static
+/sitemap.xml, /robots.txt
+Generated
+Build time
+The app is exported as static files. Dynamic routes must list every allowed parameter at build time, and unknown routes fall to the 404 page. Tool slugs sit at the root, so the build checks that no tool slug collides with a reserved path (formats, guides, about and so on).
+The tool page template
+The page follows the order defined in section 14 of the vision document. Each block is a component that reads from the registry and the content file.
+Block
+Component
+Data
+Header and breadcrumb
+Header, Breadcrumbs
+Department and tool name
+H1 and promise line
+ToolHeading
+From the record and the content file
+The tool
+ToolShell
+The engine, options and limits from the record
+How it works
+HowItWorks
+Standard text, tuned per department
+Why people convert this
+Prose
+Content file
+Format facts
+FormatFacts
+The two format records, plus content file notes
+Limits and tips
+Prose
+Content file and the record's limits
+FAQ
+Faq
+Content file
+Related tools
+RelatedTools
+The record's related list plus generated reverse pair
+Footer
+Footer
+Site data
+Metadata
+Each page sets title, description, canonical URL, Open Graph and social preview tags, robots directives, and structured data (software application and breadcrumb markup). Titles follow {Primary phrase} - Free, Private | Hurrykit, trimmed to about 60 characters. A single function builds metadata from the record so there is one place to change.
+Content file format
+---intro: "Two sentences answering the search."faqs:  - q: "Does converting HEIC to JPG reduce quality?"    a: "..."---## Why people convert HEIC to JPG...## Format facts...## Tips and limits...
+The content must be unique per page. A script compares each page's body with all others and fails the build when similarity passes a threshold (section 17).
+Static output and navigation
+Links use the framework's link component for fast navigation between pages.
+Tool pages are static HTML containing the full text content, so search engines see everything without running scripts.
+The tool itself is a client component that hydrates after load, and the engine code is dynamically imported only when the first file is chosen or the user presses a "get ready" control.
+Reserved space keeps the layout from jumping when the tool loads.
+7. Engine Abstraction and Workers
+All conversion code sits behind one interface. The UI never knows whether a job is done by the canvas, a WebAssembly codec or FFmpeg.
+The interface
+export type JobInput = {  file: File;  toolId: string;  from: string;            // detected input format ID  to: string;              // target format ID  options: Record<string, string | number | boolean>;};export type JobProgress = { stage: 'loading-engine' | 'reading' | 'converting' | 'encoding' | 'finishing'; fraction: number; message?: string };export type JobResult = { blob: Blob; fileName: string; mime: string; bytes: number; notes?: string[] };export type JobError = { code: ErrorCode; message: string; detail?: string; recoverable: boolean };export interface Engine {  readonly id: 'image' | 'ffmpeg';  canHandle(input: JobInput): boolean;  prepare(onProgress?: (p: JobProgress) => void): Promise<void>;   // load code and warm up  run(input: JobInput, onProgress: (p: JobProgress) => void, signal: AbortSignal): Promise<JobResult>;  dispose(): void;                                                  // free memory, terminate worker}
+Worker model
+Each engine owns one dedicated Web Worker, created on first use.
+The page talks to the worker through a small message protocol: prepare, run, cancel, progress, result, error.
+Large data moves as transferable buffers, not copies, to avoid doubling memory.
+Cancellation: for image jobs, the worker checks an abort flag between steps; for FFmpeg jobs, the worker is terminated and recreated, which is the reliable way to stop a running command.
+One job at a time per engine. The queue runs files in sequence; parallelism is limited to protect low-end devices. The image engine may run two small jobs at once on devices with enough cores (see section 15).
+Idle cleanup. After a period with no jobs, the worker is terminated to release memory. It reloads from cache on the next use.
+Error codes
+Code
+Meaning
+User message (summary)
+UNSUPPORTED_INPUT
+Format cannot be read here
+"This file type is not supported by this tool."
+CORRUPT_FILE
+Decoder failed on the data
+"This file looks damaged."
+TOO_LARGE
+Over the tool limit
+"This file is bigger than this tool can handle on your device."
+OUT_OF_MEMORY
+The worker ran out of memory
+"Your device ran out of memory. Try a smaller file."
+ENGINE_LOAD_FAILED
+Engine code could not load
+"Could not load the converter. Check your connection and try again."
+ENCODE_FAILED
+Encoder error
+"Conversion failed. Try a different setting."
+UNSUPPORTED_BROWSER
+A required feature is missing
+"Your browser cannot run this tool. Try Chrome or Safari."
+CANCELLED
+The user cancelled
+No error shown
+UNKNOWN
+Anything else
+"Something went wrong. Nothing was uploaded."
+Shared services
+Format detection. Check the file's first bytes (magic numbers) and the extension; never trust the extension alone. A user who renames a PNG to JPG still gets a working conversion.
+Output naming. Keep the original base name and change the extension (IMG_0012.HEIC becomes IMG_0012.jpg); add a number if a name repeats in a batch.
+Progress. Normalise progress to a value from 0 to 1 across stages, with a time-remaining estimate once enough data exists.
+Memory guard. Before a job, estimate memory needed from file size and type; warn or block above the device limit.
+Feature detection. Check for the worker, WebAssembly, OffscreenCanvas and (for the multi-thread core) shared memory before offering a tool, with a clear fallback.
+Factory. getEngine(id) returns a singleton, creating it on demand.
+8. Image Engine
+The image engine handles every still-image conversion in Phase 1. It decodes the input into pixels, optionally adjusts them, and encodes them into the target format.
+Pipeline
+Detect the real input format from the first bytes.
+Decode to an ImageBitmap or raw RGBA pixels. Use the browser's decoder when it supports the format; use a WebAssembly decoder otherwise.
+Adjust (only what the tool needs): fill a background colour when the target has no transparency, apply the EXIF orientation, and resize if the user chose a size.
+Encode with the browser's canvas encoder for JPEG, PNG and (where supported) WebP, or with a WebAssembly encoder for formats and quality levels the browser cannot do well.
+Return a Blob with the right MIME type and file name.
+Decoder and encoder matrix
+Format
+Decode
+Encode
+Notes
+JPEG, JFIF
+Browser
+Browser canvas (quality 0 to 1) or WebAssembly JPEG encoder for better quality per byte
+Apply EXIF orientation. No transparency, so fill a background.
+PNG
+Browser
+Browser canvas
+Lossless; large output for photos.
+WebP
+Browser (all current browsers read it)
+Browser canvas in Chrome and Firefox; Safari encoding support is limited, so use the WebAssembly WebP encoder as a fallback (verify)
+Supports transparency.
+AVIF
+Browser in current versions, otherwise WebAssembly decoder
+WebAssembly AVIF encoder (slow; offer as optional)
+Encoding is heavy on phones; keep it out of the default path.
+GIF
+Browser (first frame only through canvas)
+GIF encoder only in the video department (animated)
+For still output from GIF, use the first frame and tell the user.
+BMP
+Browser
+Browser canvas can write PNG and JPEG only; write BMP with a tiny encoder if needed
+Rare; low priority.
+TIFF
+WebAssembly decoder
+Not offered in Phase 1 as output
+Multi-page TIFF: convert the first page and say so.
+SVG
+Browser, drawn to canvas at a chosen size
+Via canvas to PNG, JPEG or WebP
+Needs width and height; ask the user for output size. External resources inside the SVG will not load.
+HEIC, HEIF
+WebAssembly HEIC decoder
+Via canvas to JPEG, PNG or WebP
+Use the library chosen after the test in section 23. Handle multi-image and burst files by taking the primary image.
+ICO
+Not read in Phase 1
+Write ICO container with PNG frames in a small encoder
+For PNG to ICO: output sizes 16, 32, 48, 64, 128 and 256.
+Shared image behaviours
+Orientation. Respect EXIF orientation so phone photos are not rotated incorrectly. Browsers apply it when drawing to a canvas in current versions; verify with test files and add manual rotation if needed.
+Colour and bit depth. Canvas works in 8-bit sRGB. Wide-gamut and 10-bit images (some iPhone photos) are converted to sRGB; mention this in the page copy.
+Transparency. For formats without alpha (JPEG), fill the background white by default, with a colour picker option.
+Metadata. Canvas encoding removes most metadata (EXIF, GPS). Say so on the page, since it also protects privacy. Offer a "keep metadata" option only if a library supports it reliably (later).
+Quality option. One slider, default 90 for JPEG and WebP; for PNG a "smaller file" toggle only when a WebAssembly PNG optimiser is added.
+Resize option. Optional: keep original, or limit the longest side.
+Limits that matter
+Canvas area. Browsers cap canvas size, and iOS Safari is strict (the commonly cited cap is about 16.7 million pixels, and lower memory devices can fail earlier) (verify on devices). Large photos (for example 48 or 108 megapixel phones) must be handled by downscaling to a safe size with a visible warning, or by tiling for WebAssembly paths.
+Memory. A decoded image takes about 4 bytes per pixel. A 50-megapixel image is about 200 MB before encoding; the memory guard (section 15) uses this formula.
+Speed. Use OffscreenCanvas inside the worker where available. Where it is not (older Safari), fall back to the main thread for small images and show a notice for large ones.
+HEIC specifics
+HEIC is the most requested conversion, so it gets the most testing: iPhone photos in both standard and high-efficiency settings, Live Photos (still part only), portrait mode photos with depth data, HDR (Dolby Vision) photos, and files from Samsung and other phones.
+Convert in batches with a progress count, because people convert dozens of photos at once.
+Offer "download all as ZIP" for three or more results (section 13).
+Test checklist for every image tool
+One small, one typical and one very large input.
+Rotated (EXIF orientation 3, 6, 8) input.
+Transparent input going to JPEG.
+Greyscale and CMYK JPEG input.
+A file with the wrong extension.
+A corrupt file.
+A batch of ten files.
+9. Audio Engine
+Audio conversion runs on FFmpeg compiled to WebAssembly (section 12 covers loading and hosting). The audio engine is a thin layer that builds the right command for each target format and reads the result.
+Pipeline
+Write the input file into FFmpeg's in-memory file system. For larger files, mount the file read-only so it is not copied (verify the mounting option in the chosen version).
+Run a command built from the target format and the user's options.
+Read the output file back, wrap it in a Blob and return it.
+Delete the input and output from the virtual file system immediately.
+Target format settings
+Target
+Encoder
+Default settings
+User options
+MP3
+libmp3lame
+192 kbps constant bitrate
+128, 192, 256, 320 kbps; or variable quality
+AAC (M4A)
+aac (built-in)
+192 kbps
+128, 192, 256 kbps
+WAV
+pcm_s16le
+Keep the source sample rate
+16-bit or 24-bit; sample rate
+FLAC
+flac
+Compression level 5
+Level 0 to 8
+OGG (Vorbis)
+libvorbis
+Quality 5
+Quality 3 to 8
+OPUS
+libopus
+96 kbps
+64, 96, 128, 192 kbps
+AIFF
+pcm_s16be
+Keep the source sample rate
+Bit depth
+WMA
+wmav2
+192 kbps
+Bitrate
+AMR (input only in Phase 1)
+Decoder only
+Not offered as output
+AMR output requires an encoder that the standard build may lack (verify)
+Available encoders depend on the FFmpeg build. The first task for this engine is to list the encoders in the chosen build (ffmpeg -encoders) and compare them with this table. Where a build lacks an encoder (commonly libmp3lame in minimal builds), a custom build or a different core must be used (section 23).
+Command patterns
+# Any audio to MP3 (192 kbps)ffmpeg -i input.opus -vn -map_metadata 0 -c:a libmp3lame -b:a 192k output.mp3# Any audio to AAC in an M4A containerffmpeg -i input.wav -vn -c:a aac -b:a 192k -movflags +faststart output.m4a# Any audio to WAV (16-bit PCM)ffmpeg -i input.mp3 -vn -c:a pcm_s16le output.wav# Any audio to FLACffmpeg -i input.wav -vn -c:a flac -compression_level 5 output.flac# Any audio to OPUSffmpeg -i input.mp3 -vn -c:a libopus -b:a 96k output.opus# Video file to MP3 (extract audio)ffmpeg -i input.mp4 -vn -c:a libmp3lame -b:a 192k output.mp3
+-vn drops any cover art or video stream, which prevents a failure when the input contains an image stream.
+-map_metadata 0 keeps title and artist tags where the target supports them.
+Cover art is kept as an optional improvement (for MP3 and M4A) once basic conversion is stable.
+Behaviours that need care
+Voice notes from WhatsApp arrive as OPUS in an OGG container (.opus, .ogg) or sometimes as .m4a or .amr. These are among the highest-demand inputs, so each must be tested.
+Sample rate and channels. Keep the source values by default. Offer "mono" and a sample-rate choice later (Phase 2).
+Lossy to lossless. Converting MP3 to WAV or FLAC does not restore quality. The page copy says so.
+Large WAV and FLAC files can exceed memory limits on phones (section 15).
+Progress. FFmpeg reports progress as a fraction based on the input duration; if the duration cannot be read, show an indeterminate bar.
+Very short and silent files must succeed.
+Multiple audio streams (some video files): use the first audio stream, with a clear note.
+Browser alternative for common cases
+For tiny files, the browser can decode audio with its built-in audio API and encode WAV by hand, which avoids loading the large engine. This fast path is optional: use it only for WAV output from small files, to speed up the most common request. It is a later optimisation, not a Phase 1 requirement.
+10. Video Engine
+Video uses the same FFmpeg engine as audio, with different command builders. Video is where the browser's limits show most, so this section decides carefully between a fast path that avoids re-encoding and a full path that re-encodes.
+Two paths for every video conversion
+Path
+What it does
+When to use
+Speed
+Remux (fast path)
+Copies the video and audio streams into a new container without re-encoding
+The streams are already compatible with the target container (for example H.264 and AAC in MOV or MKV going to MP4)
+Very fast, no quality loss
+Transcode (full path)
+Decodes and re-encodes video and audio
+The streams are not compatible (for example HEVC or VP9 going to MP4 for wide compatibility; AVI with old codecs)
+Slow in WebAssembly, heavy on memory
+Decision logic. First, probe the input to find its video and audio codecs. Then, if the codecs are allowed in the target container, remux. Otherwise transcode. Show the user which path is being used ("Fast copy, no quality loss" or "Re-encoding, this may take a while"). A user option lets them force a re-encode.
+Probing
+Run FFmpeg with the input only and parse the stream information printed in the log (codec names, resolution, frame rate, duration, rotation, audio channels). The probe result drives the path decision, the time estimate and the warnings (for example "4K video, this will be slow on your device").
+Command patterns
+# Remux to MP4 (fast, no re-encode)ffmpeg -i input.mov -c copy -movflags +faststart output.mp4# Transcode to MP4 (wide compatibility)ffmpeg -i input.mkv -c:v libx264 -preset veryfast -crf 23 -pix_fmt yuv420p \  -c:a aac -b:a 128k -movflags +faststart output.mp4# Transcode to WebM (VP9 + Opus)ffmpeg -i input.mp4 -c:v libvpx-vp9 -crf 33 -b:v 0 -row-mt 1 -c:a libopus -b:a 96k output.webm# MP4 to GIF (two-pass palette for quality)ffmpeg -i input.mp4 -vf "fps=12,scale=480:-1:flags=lanczos,palettegen" palette.pngffmpeg -i input.mp4 -i palette.png -lavfi "fps=12,scale=480:-1:flags=lanczos[x];[x][1:v]paletteuse" output.gif# GIF to MP4ffmpeg -i input.gif -movflags +faststart -pix_fmt yuv420p -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2" output.mp4# Video to MOVffmpeg -i input.mp4 -c copy output.mov
+The encoder names above must exist in the chosen build. In particular, libx264 is licensed under the GPL, so many WebAssembly builds either include it with GPL consequences or leave it out (section 19). The build decision in section 23 settles which encoders are used. If libx264 is not available, the fallback is a build with another H.264 encoder, or the Web Codecs API where the browser provides a hardware encoder.
+Settings the user sees
+Option
+Values
+Default
+Applies to
+Quality
+High, Balanced, Small
+Balanced (CRF 23 for H.264)
+Transcode to MP4 or WebM
+Resolution
+Original, 1080p, 720p, 480p
+Original
+Transcode only
+Audio
+Keep, remove
+Keep
+All
+GIF width
+320, 480, 640
+480
+MP4 to GIF
+GIF frame rate
+8, 12, 15
+12
+MP4 to GIF
+Behaviours that need care
+Even dimensions. H.264 needs even width and height. Add a scale filter that rounds to even numbers for odd sizes.
+Rotation metadata. Phone videos store rotation as metadata. Remux preserves it; transcode applies it. Test portrait and landscape files.
+HEVC (H.265). iPhones record HEVC by default. Playback of HEVC is not supported everywhere, so "HEVC to H.264" is a core Phase 1 page. FFmpeg's decoder handles it, but 4K HEVC is very slow in WebAssembly; set a size and resolution warning.
+HDR and 10-bit. Convert to 8-bit SDR for wide compatibility using tone-mapping filters, or warn that colours may look flat. Recommend a simple default and mark the improved path for Phase 2 (verify).
+Variable frame rate from phones: set a constant frame rate with -vsync cfr or -fps_mode cfr (flag name depends on the version) to avoid audio drift.
+Subtitles and extra tracks in MKV: copy the first video and audio streams only; ignore the rest with a note.
+Interlaced sources (some AVI, MPEG): add a deinterlace filter when the probe reports interlacing.
+Fast start. -movflags +faststart moves metadata to the front so MP4 files begin playing quickly on the web.
+Duration and progress. Use the probe's duration to compute progress.
+Practical size limits
+WebAssembly in a browser tab is limited to roughly 2 GB of memory (4 GB in some builds) and a mobile browser tab is often killed well below that. Start with these defaults and adjust after device tests:
+Device class
+Remux limit
+Transcode limit
+Desktop, 8 GB or more
+2 GB
+500 MB
+Low-end laptop
+1 GB
+250 MB
+Modern phone
+500 MB
+150 MB
+Older phone
+250 MB
+80 MB
+These numbers are starting estimates, not measurements, and must be replaced with values from the real device tests in section 20. The page tells the user the limit before they start, and explains how to continue (a smaller file, or a fast copy).
+11. Per-Conversion Specification
+This table is the master list of Phase 1 pages. Wave 1 is the first SEO release; later waves are added after Wave 1 is indexed. "Strategy" names the method in the engine. Directions that are not listed are not built in Phase 1.
+Image converters (24 pages)
+Page slug
+Input
+Output
+Strategy
+Wave
+Notes
+heic-to-jpg
+HEIC, HEIF
+JPG
+heic-decode, canvas encode
+1
+Top priority; batch and ZIP
+heic-to-png
+HEIC, HEIF
+PNG
+heic-decode, canvas encode
+1
+heic-to-webp
+HEIC, HEIF
+WebP
+heic-decode, WebP encode
+2
+webp-to-jpg
+WebP
+JPG
+canvas
+1
+Fill white background for transparency
+webp-to-png
+WebP
+PNG
+canvas
+1
+jpg-to-png
+JPG
+PNG
+canvas
+1
+png-to-jpg
+PNG
+JPG
+canvas, background fill
+1
+jpg-to-webp
+JPG
+WebP
+WebP encode
+2
+png-to-webp
+PNG
+WebP
+WebP encode
+2
+avif-to-jpg
+AVIF
+JPG
+decode, canvas
+1
+avif-to-png
+AVIF
+PNG
+decode, canvas
+2
+jpg-to-avif
+JPG
+AVIF
+AVIF encode
+3
+Slow, optional
+gif-to-jpg
+GIF
+JPG
+first frame
+2
+gif-to-png
+GIF
+PNG
+first frame
+2
+bmp-to-jpg
+BMP
+JPG
+canvas
+3
+bmp-to-png
+BMP
+PNG
+canvas
+3
+tiff-to-jpg
+TIFF
+JPG
+TIFF decode, canvas
+2
+First page only
+tiff-to-png
+TIFF
+PNG
+TIFF decode, canvas
+3
+svg-to-png
+SVG
+PNG
+draw at chosen size
+1
+Size input
+svg-to-jpg
+SVG
+JPG
+draw at chosen size
+2
+png-to-ico
+PNG
+ICO
+ICO container
+2
+Favicon sizes
+jpeg-to-jpg
+JPEG
+JPG
+rename and re-encode
+3
+Extension only
+jfif-to-jpg
+JFIF
+JPG
+rename and re-encode
+2
+image-converter
+Any image
+Any image
+Generic
+1
+Hub with format selector
+Audio converters (16 pages)
+Page slug
+Input
+Output
+Strategy
+Wave
+Notes
+opus-to-mp3
+OPUS
+MP3
+ffmpeg-transcode
+1
+WhatsApp voice notes
+m4a-to-mp3
+M4A
+MP3
+ffmpeg-transcode
+1
+wav-to-mp3
+WAV
+MP3
+ffmpeg-transcode
+1
+mp3-to-wav
+MP3
+WAV
+ffmpeg-transcode
+1
+mp4-to-mp3
+MP4
+MP3
+extract audio
+1
+Lives in the video group but listed here for the audio hub
+aac-to-mp3
+AAC
+MP3
+ffmpeg-transcode
+2
+flac-to-mp3
+FLAC
+MP3
+ffmpeg-transcode
+2
+ogg-to-mp3
+OGG
+MP3
+ffmpeg-transcode
+2
+amr-to-mp3
+AMR
+MP3
+ffmpeg-transcode
+2
+Old phone recordings
+wma-to-mp3
+WMA
+MP3
+ffmpeg-transcode
+3
+mp3-to-m4a
+MP3
+M4A
+ffmpeg-transcode
+2
+mp3-to-ogg
+MP3
+OGG
+ffmpeg-transcode
+3
+wav-to-flac
+WAV
+FLAC
+ffmpeg-transcode
+3
+flac-to-wav
+FLAC
+WAV
+ffmpeg-transcode
+3
+aiff-to-mp3
+AIFF
+MP3
+ffmpeg-transcode
+3
+audio-converter
+Any audio
+Any audio
+Generic
+1
+Hub with format selector
+Video converters (19 pages)
+Page slug
+Input
+Output
+Strategy
+Wave
+Notes
+mov-to-mp4
+MOV
+MP4
+remux, else transcode
+1
+iPhone and Mac videos
+mkv-to-mp4
+MKV
+MP4
+remux, else transcode
+1
+avi-to-mp4
+AVI
+MP4
+transcode
+1
+webm-to-mp4
+WebM
+MP4
+transcode
+1
+wmv-to-mp4
+WMV
+MP4
+transcode
+2
+flv-to-mp4
+FLV
+MP4
+remux, else transcode
+2
+3gp-to-mp4
+3GP
+MP4
+transcode
+2
+Old phone clips
+m4v-to-mp4
+M4V
+MP4
+remux
+2
+mpeg-to-mp4
+MPEG, MPG
+MP4
+transcode
+3
+hevc-to-h264
+HEVC (H.265) video
+MP4 (H.264)
+transcode
+1
+iPhone sharing
+mp4-to-mov
+MP4
+MOV
+remux
+2
+mp4-to-webm
+MP4
+WebM
+transcode
+2
+mp4-to-gif
+MP4
+GIF
+palette method
+1
+Width and fps options
+gif-to-mp4
+GIF
+MP4
+transcode
+1
+webm-to-gif
+WebM
+GIF
+palette method
+3
+mov-to-gif
+MOV
+GIF
+palette method
+3
+mp4-to-mp3
+MP4
+MP3
+extract audio
+1
+Shared with audio group (one page)
+mov-to-mp3
+MOV
+MP3
+extract audio
+3
+video-converter
+Any video
+Any video
+Generic
+1
+Hub with format selector
+Counts and waves
+The three tables list about 58 distinct conversion pages (the mp4-to-mp3 page appears in both audio and video lists and is one page) plus three hubs, giving around 59 to 61 pages depending on the final duplicates. Wave 1 is about 25 pages; Wave 2 about 20; Wave 3 the remainder.
+Default option sets
+Department
+Options shown by default
+Advanced (collapsed)
+Image
+Quality, background colour (when needed), max size
+Keep metadata (later)
+Audio
+Bitrate or quality
+Sample rate, channels (Phase 2)
+Video
+Quality preset, resolution
+Force re-encode, remove audio, frame rate
+12. FFmpeg.wasm Delivery, Hosting and Caching
+The FFmpeg engine is the heaviest part of Hurrykit. Its WebAssembly file is roughly 30 MB for the single-thread core (verify the exact size of the chosen version). How it is hosted and loaded decides whether video and audio tools feel fast or broken.
+Problem and constraints
+Cloudflare Pages' free tier has a per-file size limit of 25 MiB (verify current limit), so the engine file cannot be served from the site itself.
+A first visit must not download 30 MB until the user actually needs it.
+Repeat visits must not download it again.
+The multi-thread core needs cross-origin isolation (special headers), which can break ad scripts and third-party embeds.
+Decisions
+Topic
+Decision
+Core variant
+Single-thread core by default. It works without special headers and on every browser. Multi-thread is an optional later upgrade for desktop video only.
+Where the engine file lives
+A separate object storage bucket with a public custom domain or a CDN path (for example R2 behind Cloudflare), not inside the Pages deployment. (Verify free-tier storage, egress and per-object limits before choosing.)
+Version pinning
+The engine files are versioned by folder name (/ffmpeg/0.12.x/) and the exact URLs are set in one config file.
+Integrity
+Store a SHA-256 hash of each engine file in the config and verify after download, so a changed file is never executed.
+Compression
+Serve with Brotli or gzip, which typically cuts the WebAssembly size by more than half; confirm that the storage provider applies it.
+Loading trigger
+Load only after the user selects a file or presses "Get ready" on a tool page. Optionally preload when the user hovers over the drop zone.
+Loading UI
+A progress bar that says "Loading the converter (first time only)" with the percentage downloaded.
+Caching
+Long-lived cache headers (one year, immutable) on versioned engine files, plus the browser's Cache Storage as a second layer, so a repeat visit loads instantly even offline.
+CORS
+The storage bucket allows cross-origin reads from the site's domain and preview domains only.
+Fallback
+If the primary location fails, retry from a second mirror (for example a public CDN that hosts the same version) after verifying the hash.
+Loading flow
+Check whether the engine is in Cache Storage. If yes, load from there.
+If no, fetch with a progress stream from the primary URL.
+Verify the hash. On a mismatch, discard it and try the mirror.
+Save to Cache Storage.
+Create a blob URL for the JavaScript and WebAssembly files and pass them to the library's load call.
+Mark the engine ready and remember this in memory for the session.
+Headers file (concept)
+# public/_headers (site)/*  X-Content-Type-Options: nosniff  Referrer-Policy: strict-origin-when-cross-origin  Permissions-Policy: camera=(), microphone=(), geolocation=()/_next/static/*  Cache-Control: public, max-age=31536000, immutable
+The pages that use the multi-thread core would additionally need Cross-Origin-Opener-Policy: same-origin and Cross-Origin-Embedder-Policy: require-corp (or credentialless). Do not add these to the whole site while ads are planned. Phase 1 does not use them.
+Library worker setup
+The @ffmpeg/ffmpeg library runs its own worker. Create one FFmpeg instance per engine, call load with the core and WebAssembly URLs, listen to progress and log events, then use writeFile, exec and readFile. To cancel, terminate the instance and create a new one. Keep the instance alive between jobs within a session to avoid reloading, and terminate it after the idle timeout.
+Costs and limits to monitor
+Storage and download bandwidth of the engine file (every first visit downloads it).
+Request and egress limits of the free tier. If they are exceeded, move to a paid storage plan or use the CDN mirror as the primary.
+Monthly check: how many visitors load the engine, and the failure rate of the download.
+13. Frontend Components, State and UX Flow
+Tool states
+The tool follows one state machine on every page.
+stateDiagram-v2  [*] --> Idle  Idle --> Validating: files chosen  Validating --> Ready: accepted  Validating --> Idle: rejected (message)  Ready --> Preparing: Convert pressed  Preparing --> Converting: engine ready  Preparing --> Failed: engine load failed  Converting --> Done: all files finished  Converting --> Failed: error  Converting --> Idle: cancelled  Done --> Idle: clear  Failed --> Ready: retry
+Components
+Component
+Responsibility
+DropZone
+Accepts files by drop, click, paste and the camera or file picker; shows accepted formats and the limit; works by keyboard
+FileQueue
+Lists files with name, size, detected format, status and a remove button; allows reordering when relevant
+OptionsPanel
+Renders the tool's options from the registry (select, slider, toggle); shows an "Advanced" section collapsed
+ConvertBar
+The primary Convert button, a Cancel button during work and an overall progress summary
+ProgressBar
+Per-file and overall progress, stage text, estimated time
+ResultCard
+Per-file result: preview where possible, new size and change in size, a Download button
+DownloadAll
+Creates a ZIP of results in the worker and downloads it when there are three or more files
+EngineLoader
+The "loading the converter" bar shown during first load
+ErrorNotice
+Plain-language error with a suggested next step and a retry
+PrivacyBadge
+A small, constant "Processed on your device. Nothing is uploaded." with a link to the proof page
+FormatPicker
+On the hub pages, lets the user choose the target format and then goes to the matching tool page
+State shape
+type FileItem = {  id: string; file: File; name: string; bytes: number; detectedFormat?: string;  status: 'queued' | 'working' | 'done' | 'failed' | 'cancelled';  progress: number; result?: JobResult; error?: JobError;};type ToolState = {  phase: 'idle' | 'validating' | 'ready' | 'preparing' | 'converting' | 'done' | 'failed';  files: FileItem[];  options: Record<string, string | number | boolean>;  engineReady: boolean;  overall: number;};
+One Zustand store per tool page holds this state and exposes actions: addFiles, removeFile, setOption, start, cancel, clear, retry. Results are kept as in-memory blobs and revoked when cleared or when the page is left.
+UX flow rules
+Zero steps before the tool. The drop zone is visible without scrolling on phones and desktops.
+One main action. After files are added, the Convert button is the most prominent element.
+Defaults first. Options are preset to good defaults; a user can convert with one tap.
+Always show progress and a Cancel button during work.
+Show the result immediately, with the new size and a one-tap download. On phones, the download uses the share sheet or saves to the device depending on the browser.
+Batch by default. Multiple files can be added at once; they convert in sequence.
+Keep the user's place. Changing an option after a result re-enables Convert without clearing the files.
+Warn before work, not after failure. Large file and unsupported browser warnings appear when files are added.
+No dead ends. Every error offers a next step, and the related tools list remains visible.
+Clear on request. A Clear button removes files and results from memory; leaving the page does the same.
+Download behaviour by platform
+Desktop browsers: a download link with the file name.
+Android Chrome: a normal download.
+iOS Safari: blob downloads can open in a new view or ask for a save target; test and, where supported, offer the Web Share option for images and audio. For video, offer "Save to Files" instructions in a short help text (verify on real devices).
+Additional interface items
+Paste support for images from the clipboard.
+Drag and drop anywhere on the page area, with a highlighted drop zone.
+Recently used tools on the home page, stored locally.
+Keyboard and screen reader support (section 14).
+Microcopy is short and calm: "Drop files here or choose files", "Converting 2 of 5", "Done. 3.2 MB smaller."
+14. Responsive Layout, Styling and Accessibility
+Layout rules
+Mobile first. Design for a 360 px wide phone first, then enhance for tablets and desktops.
+Breakpoints (Tailwind defaults as a base): 640, 768, 1024, 1280 px.
+One column on phones. The tool is first, with content below. On large screens, the tool takes the main column and a side column holds related tools and tips.
+Touch targets at least 44 by 44 px; spacing that avoids accidental taps.
+Gutters of 16 px on phones, wider on larger screens. No horizontal scrolling on any page.
+Safe areas respected on phones with notches and gesture bars.
+Fluid type with a readable base size of at least 16 px for body text.
+Reserved space for the tool and images so nothing jumps while loading.
+Colour and theme
+Define colours as CSS variables (design tokens) on the root, with light and dark values; the theme follows the system by default and can be toggled and remembered.
+Each department has its own accent colour so people feel where they are: for example image in a warm orange, audio in violet, video in blue. Final values are set in the design-token file and checked for contrast.
+The base is clean and bright with rich accent colours, which matches the brief of a colourful but uncluttered site.
+Success, warning and error colours are fixed across departments.
+Design tokens (example)
+:root {  --bg: #ffffff; --surface: #f6f7fb; --text: #12151f; --muted: #5b6275; --border: #e3e6ef;  --image: #f97316; --audio: #8b5cf6; --video: #2563eb;  --ok: #16a34a; --warn: #d97706; --error: #dc2626;  --radius: 14px;}:root[data-theme="dark"] {  --bg: #0d0f17; --surface: #171a26; --text: #f2f4fa; --muted: #a3aac0; --border: #2a2f42;}
+When the page loads, a tiny script sets the theme before the first paint to avoid a flash of the wrong theme.
+Typography and visuals
+A modern, readable sans-serif font, self-hosted, with a fallback to system fonts; load at most two weights.
+Icons as inline SVG, from one icon set.
+No stock-photo heroes; use simple illustrations, department colours and real tool previews. Large images are avoided to keep pages fast.
+Accessibility
+Area
+Requirement
+Keyboard
+Every control is reachable and usable by keyboard; the drop zone opens the file picker with Enter or Space; focus is visible
+Screen readers
+Proper headings, landmarks and labels; progress announced through a polite live region; results announced when finished
+Contrast
+Text and controls meet WCAG AA contrast in both themes
+Motion
+Respect the reduced-motion setting; no animation needed to understand state
+Zoom and text size
+The layout works at 200 percent zoom
+Errors
+Text-based, not colour only; linked to the control involved
+Language
+The page language is set; Hindi pages (later) use the right language tag
+Internationalisation readiness
+All interface strings live in a single messages file so Hindi can be added later without a rewrite. Numbers and file sizes are formatted through one helper. Layout must tolerate longer Hindi text and the Devanagari script, which needs a suitable font, and right-to-left languages are not planned.
+Quality gates
+Automated accessibility checks run in the end-to-end tests on every page type.
+Layout screenshots at widths 360, 768 and 1280 are reviewed for each new page type.
+A real-device check on one Android phone and one iPhone before each release.
+15. Performance, Memory and Low-End Devices
+Many Indian users are on mid-range or older Android phones with limited memory and on mobile data. Performance is a feature, and it is also a search ranking factor.
+Page load budgets (starting targets, to be measured)
+Metric
+Target on a mid-range phone, typical mobile connection
+Largest content shown
+Under about 2.5 seconds
+Layout stability
+Almost no jumping (a very low layout-shift score)
+Responsiveness to taps
+Under about 200 ms
+JavaScript for a tool page before any engine
+Aim for under about 150 KB compressed
+Home page
+No engine code at all
+These follow the commonly used Core Web Vitals thresholds. Treat them as goals to test against, not guaranteed results.
+Loading strategy
+Static HTML with all text content, so the page is useful before any script runs.
+The tool's interface hydrates quickly; the engine loads only on demand.
+Engine code is split per engine and per codec: for example the HEIC decoder loads only on HEIC pages, and the AVIF encoder only on AVIF output pages.
+Preload the engine when the pointer or touch nears the drop zone, or on a "Get ready" tap.
+Fonts are self-hosted and limited; images are small, with fixed dimensions.
+Third-party scripts (analytics) load late and are tiny. No ad scripts exist in Phase 1.
+Memory management
+Practice
+Detail
+Estimate before running
+Image: width times height times 4 bytes, times about 2 for working copies. Video: file size times about 3 for transcode. Audio: decoded size depends on duration, sample rate and channels.
+Compare to a device budget
+Use navigator.deviceMemory (where available), hardware concurrency and the user agent to choose a class (low, mid, high). If a value is unavailable, assume the lower class on mobile.
+Warn or block
+Warn at the soft limit and block at the hard limit, with an explanation and a suggestion.
+Free quickly
+Delete engine files, close bitmaps (bitmap.close()), revoke object URLs and clear arrays as soon as a job completes.
+One heavy job at a time
+Video and large audio jobs run one by one. Image jobs may run two at once on high-class devices.
+Terminate on idle
+Stop the worker after a short idle period and after errors.
+Recover from crashes
+If the tab or worker dies, the page shows a message the next time it loads and suggests a smaller file.
+Speed practices
+Use remux whenever possible for video (section 10).
+Use the veryfast encoder preset by default and offer a slower "Smaller file" option.
+Use the browser's native image encoder for common formats, which is much faster than WebAssembly.
+Offer the multi-thread core as an optional upgrade only after verifying it on target devices.
+Show a realistic time estimate and keep the screen on during long jobs using the Screen Wake Lock API where supported.
+Warn mobile users that switching apps may pause or kill a long conversion, especially on iOS.
+Network considerations
+The 30 MB engine file is the largest cost for first-time video and audio users. Say so up front and cache it for future visits.
+On metered or slow connections (as reported by the network information API where available), ask before downloading the engine.
+Make the experience work offline after the first load for tools whose engine is cached (a bonus, later made into an installable web app).
+Measuring
+Run a Lighthouse check in CI on the home page and one page of each department, and fail the build when scores fall below the thresholds.
+Track real-user timing through the privacy-friendly analytics where supported.
+Keep a table of measured results per device in docs/compatibility.md and update the size limits from it.
+16. Edge Cases Catalogue
+Each row is a case the tools must handle, how it should behave, and where it is tested. Add a row whenever a new problem is found.
+Input and file handling
+#
+Case
+Expected behaviour
+1
+Wrong or missing extension (a PNG named .jpg, a file with no extension)
+Detect the real format from the first bytes and convert; if undetectable, show "unsupported file type"
+2
+Uppercase or mixed-case extensions (.HEIC, .Jpeg)
+Treated the same as lowercase
+3
+Zero-byte file
+Reject with "this file is empty"
+4
+Corrupt or truncated file
+CORRUPT_FILE message; other files in the batch continue
+5
+Very large file above the hard limit
+Block before work with the limit and a suggestion
+6
+File between the soft and hard limits
+Warn, allow the user to continue
+7
+Many files at once (over the batch limit)
+Accept up to the limit, tell the user how many were skipped
+8
+Duplicate file names in a batch
+Output names get a number suffix; ZIP names are unique
+9
+File names with spaces, Hindi characters, emoji or very long names
+Preserved in output where the OS allows; shortened safely if too long
+10
+Folder dropped instead of files
+Read the files inside where the browser allows; otherwise explain
+11
+File changed or deleted after being chosen
+Catch the read error and ask the user to choose it again
+12
+Same file added twice
+Add again but mark as duplicate, or ask
+13
+Input already in the target format (JPG to JPG)
+Allow (it re-encodes) but tell the user the size may change; some tools can skip with a note
+14
+Wrong type for the tool (a video dropped on an image tool)
+Offer a link to the right tool
+Image
+#
+Case
+Expected behaviour
+15
+Transparent PNG or WebP to JPG
+Background fill (white default), with a colour option
+16
+EXIF orientation
+Output is upright
+17
+Huge pixel dimensions
+Downscale to a safe size, with notice; never crash the tab
+18
+Animated GIF, WebP or AVIF to a still format
+First frame only, with a notice
+19
+Multi-page TIFF
+First page only, with a notice
+20
+CMYK or 16-bit images
+Convert to sRGB 8-bit; mention colours may shift
+21
+HEIC with depth map, burst or Live Photo
+Primary image only
+22
+HDR or wide-gamut HEIC
+Convert to SDR sRGB; note it
+23
+SVG without a size, or with external resources
+Ask for the output size; warn that external images do not load
+24
+Browser lacks WebP or AVIF encoding
+Use the WebAssembly encoder or hide the option with a message
+Audio
+#
+Case
+Expected behaviour
+25
+Input has cover art
+Ignore the image stream (-vn), optionally copy later
+26
+Mono or very low bitrate source (AMR)
+Convert correctly; do not claim quality improvement
+27
+Lossy to lossless conversion
+Allowed; page copy explains no quality is regained
+28
+Very long audio (hours)
+Warn on estimated time and memory; allow
+29
+File with no audio track
+Error: "no audio found"
+30
+Multiple audio tracks
+First track; note
+31
+Silent file or very short file
+Converts normally
+32
+Unusual sample rates
+Keep or resample; do not fail
+Video
+#
+Case
+Expected behaviour
+33
+HEVC, 10-bit, HDR
+Offer H.264 SDR; warn about slow speed and colour change
+34
+Portrait phone video with rotation metadata
+Orientation preserved
+35
+Odd dimensions
+Rounded to even for H.264
+36
+Variable frame rate
+Constant frame rate output to avoid sync drift
+37
+Audio-only or video-only file
+Convert what exists; label it
+38
+Multiple video or audio tracks, subtitles
+First tracks only; note
+39
+Remux fails because of incompatible codecs
+Retry as transcode automatically, and tell the user
+40
+Output file exceeds the memory limit
+Stop with an explanation before the crash where estimation allows
+41
+Long conversion on a phone
+Wake Lock where supported; warn about switching apps
+42
+GIF too large
+Limit the width, frame rate and duration; show the estimated size
+Browser and system
+#
+Case
+Expected behaviour
+43
+Browser lacks Web Worker, WebAssembly or required APIs
+UNSUPPORTED_BROWSER message with suggested browsers
+44
+In-app browsers (Instagram, Facebook, WhatsApp) restrict downloads or APIs
+Detect them and suggest "open in your browser"
+45
+Private mode with storage blocked
+Skip the cache, work with a larger first download
+46
+Offline after the first visit
+Cached tools work; others say "connect to continue"
+47
+Engine download interrupted
+Resume or retry; show progress; use the mirror
+48
+User leaves or reloads during conversion
+Browser warns before leaving; work is lost, which is stated
+49
+Tab goes to the background on a phone
+Warn; resume or restart safely
+50
+Out of memory
+OUT_OF_MEMORY message with a smaller-file suggestion
+51
+iOS download behaviour
+Provide Share or Save instructions
+52
+Slow or metered network
+Ask before downloading the engine
+53
+Ad blockers or privacy extensions block scripts
+Engine and tool must still work; analytics failing must not affect the tool
+54
+Very small screens (320 px)
+Layout still usable
+The catalogue becomes the checklist for tests in section 20. Every row gets a test file or manual step.
+17. SEO Implementation
+The strategy is in the vision document, section 15. This section is how it is built into the code.
+What the build generates
+Output
+How
+Title and meta description
+One metadata function reads the record; titles trimmed to about 60 characters, descriptions to about 155
+Canonical URL
+Built from the site URL variable plus the slug; self-referencing
+Open Graph and social preview tags
+Title, description, and a generated image per department
+Structured data
+Software application markup on tool pages; breadcrumb markup on every page; validated in CI
+Sitemap
+sitemap.xml built from live records, split by type (tools, formats, guides, pages)
+robots.txt
+Allows crawling, links to the sitemap; blocks nothing important
+Redirects
+_redirects file generated from alias lists in the registry
+Internal links
+Related lists, hub lists and format-page lists generated from the registry
+Search index
+Generated at build time for the site search
+Preview protection
+Preview and staging builds send a noindex header so they are never indexed
+Build-time checks (scripts/seo-check)
+The build fails when any live page breaks one of these:
+Missing or duplicate title, description or H1.
+Title or description outside the length range.
+Body text under the minimum word count (250 words of unique content).
+Content similarity with any other page above the threshold (for example, a word-shingle comparison where more than about 60 percent overlap fails).
+Fewer than three FAQ entries, or an FAQ identical to another page's.
+Missing canonical, or a canonical that points elsewhere.
+Fewer than three outgoing internal links, or an orphan page with no inbound links.
+Broken internal links or redirect chains.
+Images missing alt text or dimensions.
+A slug that collides with a reserved path.
+Invalid structured data.
+Content workflow for each page
+Research the primary phrase (vision document section 15, step 2) and note it in the record.
+Write the Markdown file with the intro, why-convert text, format facts, tips and limits, and FAQs.
+Test the tool with real files and write the limits and quirks into the text, based on what was seen.
+Run the SEO check locally; fix failures.
+Set the record's status to ready, review the preview, then set it to live.
+Content rules
+Write for the person with the problem. Answer the question in the first two lines.
+Say honestly what the tool does and does not do.
+Do not publish copy that is the same on many pages with only the format names changed. The check enforces this, but the real fix is to write about what is different: who uses each format, what device it comes from, what problems appear.
+Keep claims you cannot back up out of the text (no "best" or "fastest" without proof).
+Technical SEO details
+Pages are pre-rendered so content is in the first HTML response.
+Only one H1 per page, with a logical heading order.
+Language attribute set; hreflang links added when Hindi pages exist.
+Trailing slash policy set once and enforced by redirects.
+404 returns a real 404 status; the not-found page links to hubs and search.
+Hub pages use descriptive anchor text for links to tools.
+Launch and monitoring tasks
+Verify the site in Search Console and Bing Webmaster Tools, submit the sitemap, and use the URL inspection tool on the first few pages.
+Release Wave 1, then check indexing weekly; release the next wave only when most of the previous wave is indexed (vision document section 15, step 10).
+Record the date each page went live in the registry to compare performance by wave.
+18. Analytics, Error Logging and Privacy
+The privacy promise ("your files never leave your device") limits what can be measured. The rule is simple: measure what happens to the tool, never what is in the file.
+What is measured
+Event
+Data kept
+Purpose
+Page view
+Page path, referrer type, country (from the analytics tool), device class
+Traffic and search performance
+Tool started
+Tool ID
+Which tools are used
+Conversion finished
+Tool ID, input format, output format, size bucket (for example 1 to 5 MB), duration bucket, engine path (remux or transcode)
+Reliability and speed
+Conversion failed
+Tool ID, error code, browser family and major version, device class
+Fix bugs
+Engine load
+Success or failure, time bucket
+Hosting health
+Download clicked
+Tool ID
+Success rate
+What is never collected
+File names, file contents, file metadata (such as location in photos), exact file sizes, user-typed text, IP addresses stored by us, or anything that identifies a person.
+Implementation
+Use a privacy-friendly analytics tool that does not use cookies and does not track people across sites. Custom events are sent through its simple event call.
+Error logs go to a tiny endpoint (for example, a serverless function on the host or a free-tier logging service) that accepts only the allowed fields. The endpoint rejects anything with extra fields.
+The analytics script loads after the page is interactive and never blocks the tool. If it is blocked by the user, the tool works the same.
+A single track() function is the only place events are sent, which makes the allowed list easy to audit.
+Local storage is used only for the theme, recently used tools and a dismissed notice, never for file data.
+Proving the promise
+An automated test runs each tool with a sample file while recording all network requests, and fails if any request carries file bytes or file names.
+The /privacy-promise page explains in plain words how to check it: open the browser's network tab, convert a file, and see that nothing is sent.
+The page also states what is sent (the page itself, the one-time engine download and anonymous usage counts).
+Third-party scripts are listed and kept to a minimum; none have access to the file area of the page.
+Consent and legal pages
+With a cookie-free analytics tool and no advertising, a consent banner may not be required in many places, but this depends on the exact tool and the visitor's country (verify with the tool's documentation and, before launch, a legal review).
+Publish the privacy policy, terms and cookie notice in plain language. State the data in the table above.
+Once ads or accounts are added in later phases, the consent approach is revisited.
+Reports to review
+Weekly: top pages, top tools, failure rate per tool, engine load failures.
+Monthly: conversion completion rate (started versus finished), average conversion time by size bucket, browser share and which browsers fail most.
+Use these to decide which limits to change, which tools to fix first and which pages to improve.
+19. Security, Licensing and Legal
+This section lists engineering practices and licence checks. It is not legal advice; have a qualified person review before the site earns money.
+Web security
+Area
+Practice
+Content security policy
+A strict policy: scripts only from the site and the engine host, workers from blob and the site, no inline scripts except a hashed theme script, no framing by other sites
+Headers
+X-Content-Type-Options, a restrictive referrer policy, a permissions policy that disables camera, microphone and location, and HTTPS only with HSTS once the domain is set
+Dependencies
+Pin exact versions; run dependency audits and automated update checks in CI; review changelogs of the codec libraries
+Engine file integrity
+Hash check before execution (section 12)
+File handling
+Treat every file as untrusted input. Decoders run inside workers and WebAssembly, which limits the damage from malformed files. Never insert file-derived text into the page as HTML.
+SVG input
+Render SVG to canvas through an image element only; never inject the SVG markup into the page
+Error endpoint
+Accept only the allowed fields; limit size and rate; no stored personal data
+Secrets
+None needed in Phase 1 beyond deployment tokens, which live in the CI secrets store and never in the repository
+Output downloads
+Use blob URLs and revoke them after use
+Abuse
+Files never reach the servers, so the site cannot host or distribute user content
+Licensing review
+Record every bundled library with its licence, version and source in docs/licences.md, and show required notices on a public /licences page. Starting points to check against the current releases (verify each):
+Component
+Typical licence
+What to check
+FFmpeg (the core library)
+LGPL or GPL depending on the build options
+A build with GPL parts (for example with libx264) has stronger obligations than an LGPL-only build, including offering source for the distributed binary. Decide on the build in section 23.
+@ffmpeg/ffmpeg wrapper
+MIT-style
+Keep notices
+x264 (H.264 encoder)
+GPL
+Obligations if distributed; also patent considerations for H.264 encoding
+libmp3lame
+LGPL
+Dynamic or replaceable linking requirements
+libvorbis, libopus, FLAC
+BSD-style
+Keep notices
+HEIC decoder libraries (libheif and decoders such as libde265)
+LGPL or similar; the HEVC technology has patent licensing
+Check the specific library and the patent position before relying on it commercially
+jSquash and Squoosh codecs (MozJPEG, libwebp, libavif and others)
+Apache-2.0 or BSD-style
+Keep notices
+React, Next.js, Tailwind, Zustand, Zod
+MIT
+Keep notices
+Fonts
+Often the SIL Open Font Licence
+Self-hosting is allowed; keep notices
+Codec patents
+H.264, HEVC and AAC are covered by patent pools. Many hobby and free services operate in this space, and browsers include licensed decoders, but a site shipping its own encoder is in a different position from a browser. Before the site earns revenue, ask a qualified professional whether the chosen encoders require licences. Until then, prefer these mitigations: use the browser's built-in encoders through the Web Codecs API where available, use royalty-free formats (OPUS, VP9, AV1, FLAC) wherever the user's goal allows, and make the remux fast path the default so that no encoding happens for most video conversions.
+Terms of use and disclaimers
+The terms say that users must have the right to convert their files, that the service is provided as is, and that conversions may change quality.
+Do not use copyrighted images or logos in the interface.
+Respond to legal contact requests through the contact page.
+Keep the name checks open: exact-match search, social handles and an India trademark search before the domain goes live.
+20. Testing
+Testing has three jobs: prove each conversion works, prove nothing is uploaded, and prove the site works on real phones.
+Test layers
+Layer
+Tool
+What it covers
+Unit
+Vitest
+Registry validation, slug rules, file-name logic, format detection, size and memory estimators, command builders (the exact FFmpeg arguments for each tool and option set)
+Engine integration
+Vitest in a browser mode or Playwright
+Each engine converts small fixture files and the output is checked (format signature, dimensions, duration, non-zero size)
+End-to-end
+Playwright (Chromium, Firefox, WebKit)
+Real tool pages: drop a file, convert, download, check the result; mobile viewport runs
+Privacy check
+Playwright network recording
+No request body contains file bytes or names, for every tool
+SEO check
+The seo-check script
+Section 17 rules
+Accessibility
+Automated checks inside the end-to-end runs
+Section 14
+Performance
+Lighthouse in CI
+Section 15 budgets
+Visual
+Screenshots at 360, 768 and 1280 widths
+Layout regressions
+Real devices
+Manual pass
+iOS Safari, Android Chrome, low-end Android
+Fixture library
+Keep a small set of sample files under tests/fixtures, each under about 1 MB where possible, covering every row of the edge case catalogue (section 16): normal, rotated, transparent, CMYK, corrupt, wrong extension, empty, HEVC iPhone clip, portrait phone video, variable frame rate clip, WhatsApp OPUS voice note, AMR recording, multi-track MKV and so on. Larger files for stress tests stay out of the repository and are generated by a script.
+Output checks
+Images: correct magic bytes, decoded dimensions, orientation, and a perceptual comparison with a reference image within a tolerance.
+Audio: correct container and codec, duration within a small tolerance of the input, and sample rate and channels as expected.
+Video: correct container and codec, duration within tolerance, frame size, audio present, and playable by the browser's media element in the test.
+Compatibility matrix
+Maintain this in docs/compatibility.md and fill it with real results.
+Browser / device
+Image tools
+Audio tools
+Video tools
+Notes to record
+Chrome (Windows or Mac)
+Edge (Windows)
+Firefox
+Safari (Mac)
+Chrome on Android, mid-range
+Chrome on Android, low-end (3 to 4 GB memory)
+Safari on iPhone
+In-app browsers (Instagram, WhatsApp)
+For each cell record: works, works with limits (give the limits), or fails (give the reason).
+Test schedule
+Every change: unit, SEO and privacy checks, and a short end-to-end subset.
+Every merge to main: the full end-to-end suite on three browsers.
+Before each wave release: the real-device pass and the full compatibility matrix.
+Monthly: re-run after dependency updates and browser releases.
+Bug handling
+When a user reports a failure, add the sample file (if the user can share it) or a recreated one to the fixtures, write the failing test first, then fix it. Add a row to the edge case catalogue.
+21. Hosting, CI/CD and Environments
+Phase 1 runs on free tiers. Every service below must have its current limits checked before use (verify).
+Environments
+Environment
+Purpose
+URL
+Indexing
+Local
+Development
+localhost
+n/a
+Preview
+One per branch or pull request
+Provided by the host
+Blocked (noindex header)
+Production
+The live site
+The free-host address first; the real domain once bought
+Allowed only on the final domain
+Because the domain is not bought yet, launch the production build on the host's free address for private testing only, and keep it unindexed. Turn indexing on only after the real domain is attached, so that no ranking is earned on a temporary address.
+Services
+Need
+Service
+Notes
+Static site hosting
+Cloudflare Pages (free tier)
+Builds from GitHub, preview deployments, headers and redirects files (verify file-count and size limits)
+Engine file storage
+Cloudflare R2 or a similar free object store
+Public access via a custom domain or the provider's public address; CORS allowed for the site
+Source control
+GitHub
+Private repository to begin with
+CI
+GitHub Actions
+Free minutes for private repositories are limited (verify)
+Analytics
+A cookie-free analytics service (free tier or a self-hosted instance)
+Section 18
+Error endpoint
+A small serverless function on the host
+Section 18
+Domain and DNS
+Bought later; DNS on the same provider as the host for simple setup
+Add a redirect from the www host to the main host
+Email for contact
+A forwarding address on the domain once bought
+Until then, a contact form that opens the user's email app
+Pipeline
+flowchart LR  A[Push or pull request] --> B[Install and cache]  B --> C[Lint and type check]  C --> D[Unit tests]  D --> E[Build static site]  E --> F[SEO and bundle checks]  F --> G[End-to-end and privacy tests]  G --> H{Branch}  H -->|feature| I[Preview deploy]  H -->|main| J[Production deploy]
+Pipeline steps in detail
+Install with a locked file and cache the package store.
+Lint, format check and type check.
+Unit tests.
+Build the static export. The build includes registry validation and content checks.
+Run seo-check, a bundle-size check (home page has no engine code; shared bundle under budget) and the licence check.
+Start the built site locally and run the Playwright tests, including the privacy network check.
+Run Lighthouse on key pages.
+Deploy: preview for branches; production for main after all checks pass.
+After deploy, run a smoke test against the live address (home page loads, one tool page loads, sitemap exists).
+Rollback and releases
+Hosting keeps previous deployments, so a rollback is a single action.
+Releases are tagged. The change log lists new pages, changed tools and dependency updates.
+The engine file version is changed only in a deliberate change with a new folder, so a deploy can never break the cached copy.
+Runbook (docs/runbook.md)
+Keep short instructions for: attaching the domain, rotating tokens, restoring a deployment, changing the engine file version, adding a new conversion page, and what to check when the failure rate rises.
+Cost watch
+Every month, record bandwidth, storage, build minutes and function calls against the free-tier limits in a small sheet. Plan the move to paid plans before limits are reached.
+22. Build Order, Milestones and Launch Checklist
+The order below builds the riskiest and most reusable parts first. Durations assume about 10 to 15 hours of work per week and are estimates. Each milestone ends with something that can be demonstrated.
+gantt  title Phase 1 plan (weeks, part-time)  dateFormat  X  axisFormat %s  section Foundations  M0 Setup and decisions          :m0, 0, 1  M1 Registry, template, shell    :m1, 1, 3  section Image  M2 Image engine and HEIC        :m2, 3, 3  M3 Remaining image tools        :m3, 6, 2  section Audio and video  M4 FFmpeg delivery and audio    :m4, 8, 3  M5 Video tools                  :m5, 11, 3  section Launch  M6 Content, SEO, trust pages    :m6, 14, 2  M7 Device testing and fixes     :m7, 16, 2  M8 Soft launch Wave 1           :m8, 18, 1
+Milestones
+#
+Milestone
+Weeks (est.)
+Work
+Demonstrable result
+M0
+Setup and decisions
+1
+Create the repository, project, linting, CI skeleton and preview deploys; run the HEIC library test and the FFmpeg build test (section 23); record decisions
+A deployed blank page and a decision log
+M1
+Registry, template, shell
+2
+Registry schema and validation, tool page template, home and hub pages, header, footer, theme, search, 404
+Two dummy tools render as full pages from the registry
+M2
+Image engine and HEIC
+3
+Engine interface, worker, format detection, canvas encode, HEIC decode, batch queue, ZIP, results UI, memory guard
+heic-to-jpg works end to end on desktop and phones
+M3
+Remaining image tools
+2
+All other image pairs, WebAssembly WebP and AVIF paths, SVG size input, ICO writer
+All image pages pass tests
+M4
+FFmpeg delivery and audio
+3
+Engine hosting, cached loading, integrity check, audio command builders, progress, cancel
+opus-to-mp3, m4a-to-mp3, wav-to-mp3 work; engine caches on repeat visits
+M5
+Video tools
+3
+Probe, remux or transcode logic, HEVC handling, GIF palette method, size limits
+mov-to-mp4, hevc-to-h264, mp4-to-gif work on real phones
+M6
+Content, SEO, trust pages
+2
+Write unique copy for Wave 1 pages, format pages, privacy-promise, legal pages; run SEO checks
+Wave 1 pages pass every build check
+M7
+Device testing and fixes
+2
+Real-device pass, fill the compatibility matrix, adjust limits, fix issues
+A completed matrix and updated limits
+M8
+Soft launch of Wave 1
+1
+Buy the domain, attach it, switch indexing on, submit sitemaps, set up Search Console
+Live site; Wave 1 pages submitted
+Total: about 19 weeks of part-time work when written out in full. The vision document's rough estimate of 14 weeks assumes a few overlapping milestones (for example, writing copy while building video tools) and a pace above the lower end; treat the longer number as the safe plan.
+Rules for working through the milestones
+Finish each milestone before starting the next; do not build video before the image path is solid.
+Test on a real phone at the end of every milestone.
+Write the page copy for a tool as soon as it works, while its quirks are fresh.
+If a milestone slips by more than half its time, cut scope (move low-wave pages to a later wave) instead of working longer.
+Keep Wave 2 and Wave 3 pages as draft until Wave 1 shows indexing.
+Launch checklist
+Area
+Item
+Done
+Brand
+Exact-match search, social handles and India trademark search completed; domain bought
+Site
+All Wave 1 records live; sitemap contains only live pages; noindex removed on production only
+Quality
+Full test suite passes; compatibility matrix filled; privacy check passes
+Content
+Every live page meets the SEO bar; privacy-promise, about, contact, privacy, terms, cookies, licences pages live
+Performance
+Lighthouse thresholds met; engine caches correctly
+Security
+Headers and content policy set; dependency audit clean; engine hash verified
+Monitoring
+Analytics events work; error endpoint receives test errors; Search Console and Bing verified
+Operations
+Runbook written; rollback tried once; cost sheet started
+Legal
+Policies reviewed; licences recorded; codec decisions recorded
+Announcements
+A short launch note prepared for a few relevant communities
+23. Open Questions and Things to Verify
+These are the points where this guide makes an assumption that must be checked against the real software before the dependent work starts. Each has a test to run and a rule for deciding.
+#
+Question
+How to check
+Decision rule
+Blocks
+1
+Which FFmpeg WebAssembly core and build to use? Does it include libmp3lame, libx264, libopus, libvorbis, FLAC and a usable AMR decoder?
+Load the candidate core, run ffmpeg -encoders and -decoders, and try each command in sections 9 and 10
+Use the standard core if it covers the needed encoders; otherwise compile a custom LGPL-only build or pick another build
+M4, M5
+2
+Is the single-thread core fast enough for typical files on a mid-range phone?
+Time a 100 MB remux and a 50 MB transcode on two phones
+If transcode is too slow, restrict transcode size limits and lean on remux; consider the Web Codecs API for H.264 encoding where available
+M5
+3
+H.264 encoder and licensing path
+Review section 19 and take legal advice before monetising
+Prefer remux; use hardware encoders via Web Codecs where possible; avoid distributing GPL code without a plan
+M5, launch
+4
+Which HEIC library, heic-to or heic2any?
+Test both on real iPhone and Android HEIC files (standard, HDR, portrait, Live Photo, burst); compare success, speed, output quality and bundle size
+Choose the one that decodes all samples correctly; if both fail some files, add a second decoder as a fallback
+M2
+5
+Is the FFmpeg engine file's real size and does the object store serve it compressed?
+Measure transferred size from the storage address in the browser
+If transfer is over about 20 MB, investigate compression or a smaller core
+M4
+6
+Current Cloudflare Pages and R2 free-tier limits (file size, files per deploy, bandwidth)
+Read the current official documentation
+Choose a different host or bucket if a limit blocks the plan
+M0
+7
+Safari WebP encoding and canvas size limits on iOS
+Test on iPhone with large photos
+Use WebAssembly encoders and tiling or downscale where canvas fails
+M2, M3
+8
+iOS file picker behaviour with the accept attribute for HEIC and for audio files
+Test on iPhone: picking from Photos and Files
+If specific types are filtered out, widen accept and validate in code
+M2
+9
+How do downloads behave on iOS Safari for each type (image, audio, video, ZIP)?
+Test on iPhone
+Add Web Share and instructions where downloads do not save
+M2
+10
+Does the Screen Wake Lock API work in the target browsers?
+Test
+Use it where supported; warn otherwise
+M5
+11
+Does the chosen analytics tool need a consent banner for visitors from the target countries?
+Read its documentation and, before launch, get a short legal opinion
+Add the notice if needed
+Launch
+12
+Is hurrykit clear of conflicts?
+Exact-match web search, social handles, India trademark search, and the domain check
+If a conflict is found, switch to the backup name before launch
+Launch
+13
+How accurate are the memory limits in section 10?
+Measure on at least four devices
+Replace the table with measured values
+M7
+14
+Do in-app browsers support the tools?
+Open the site from Instagram and WhatsApp on Android and iPhone
+Show an "open in your browser" notice
+M7
+15
+Next.js static export limits
+Check the current documentation for features unavailable with static export
+Avoid those features or switch to the Vite alternative
+M0
+Decision log format
+For every answer, add an entry in docs/decisions.md:
+## D-014: HEIC libraryDate: YYYY-MM-DDQuestion: Which HEIC decoder?Tested: samples A to G on devices X, Y, ZResult: library A decoded 7/7, library B decoded 5/7Decision: library A, with B as fallbackImpact: sections 8 and 20 updated
+24. Code Skeletons
+These are starting points that show the shape of the code. They are not complete and have not been run. Check each library's current API when writing the real version.
+24.1 Registry schema (registry/schema.ts)
+import { z } from 'zod';export const OptionSchema = z.object({  id: z.string(),  label: z.string(),  type: z.enum(['select', 'slider', 'toggle']),  choices: z.array(z.object({ value: z.union([z.string(), z.number()]), label: z.string() })).optional(),  min: z.number().optional(),  max: z.number().optional(),  default: z.union([z.string(), z.number(), z.boolean()]),  help: z.string().optional(),  advanced: z.boolean().default(false),});export const ToolSchema = z.object({  id: z.string().regex(/^[a-z0-9-]+$/),  slug: z.string().regex(/^[a-z0-9-]+$/),  kind: z.literal('convert'),  department: z.enum(['image', 'audio', 'video']),  from: z.array(z.string()).min(1),  to: z.string(),  engine: z.enum(['image', 'ffmpeg']),  strategy: z.string(),  options: z.array(OptionSchema),  limits: z.object({ maxBytes: z.number(), warnBytes: z.number(), maxFiles: z.number() }),  seo: z.object({ primary: z.string(), title: z.string().max(70), description: z.string().max(160) }),  contentRef: z.string(),  related: z.array(z.string()),  wave: z.number().int().min(1).max(3),  status: z.enum(['draft', 'ready', 'live']),});export type Tool = z.infer<typeof ToolSchema>;
+24.2 Engine factory (engines/factory.ts)
+import type { Engine } from './types';const cache = new Map<string, Engine>();export async function getEngine(id: 'image' | 'ffmpeg'): Promise<Engine> {  const existing = cache.get(id);  if (existing) return existing;  const engine = id === 'image'    ? new (await import('./image/ImageEngine')).ImageEngine()    : new (await import('./ffmpeg/FfmpegEngine')).FfmpegEngine();  cache.set(id, engine);  return engine;}export function disposeEngine(id: 'image' | 'ffmpeg') {  cache.get(id)?.dispose();  cache.delete(id);}
+24.3 Format detection (engines/shared/detect.ts)
+export async function detectFormat(file: File): Promise<string | null> {  const b = new Uint8Array(await file.slice(0, 32).arrayBuffer());  const ascii = (s: number, e: number) => String.fromCharCode(...b.slice(s, e));  if (b[0] === 0xff && b[1] === 0xd8) return 'jpg';  if (ascii(1, 4) === 'PNG') return 'png';  if (ascii(0, 4) === 'RIFF' && ascii(8, 12) === 'WEBP') return 'webp';  if (ascii(0, 3) === 'GIF') return 'gif';  if (ascii(4, 8) === 'ftyp') {    const brand = ascii(8, 12);    if (['heic', 'heix', 'mif1', 'msf1'].includes(brand)) return 'heic';    if (brand === 'avif') return 'avif';    if (brand === 'qt  ') return 'mov';    if (brand === 'M4A ') return 'm4a';    return 'mp4';  }  if (ascii(0, 4) === 'OggS') return 'ogg';       // may be opus or vorbis: inspect further  if (ascii(0, 3) === 'ID3' || (b[0] === 0xff && (b[1] & 0xe0) === 0xe0)) return 'mp3';  if (ascii(0, 4) === 'fLaC') return 'flac';  if (ascii(0, 4) === 'RIFF' && ascii(8, 12) === 'WAVE') return 'wav';  if (b[0] === 0x1a && b[1] === 0x45 && b[2] === 0xdf && b[3] === 0xa3) return 'mkv'; // also webm  return null; // fall back to the extension, then to "unsupported"}
+The real version also needs: AVI, WMV, FLV, 3GP, TIFF, BMP, AMR, AIFF, WMA and the Opus-versus-Vorbis check inside OGG.
+24.4 Image engine worker (engines/image/worker.ts)
+self.onmessage = async (e: MessageEvent) => {  const { type, id, payload } = e.data;  try {    if (type === 'run') {      const { file, to, options } = payload;      post(id, 'progress', { stage: 'reading', fraction: 0.1 });      const bitmap = await decode(file);                 // native or WebAssembly decoder      post(id, 'progress', { stage: 'converting', fraction: 0.5 });      const canvas = new OffscreenCanvas(bitmap.width, bitmap.height);      const ctx = canvas.getContext('2d')!;      if (to === 'jpg' && options.background) {        ctx.fillStyle = String(options.background);        ctx.fillRect(0, 0, canvas.width, canvas.height);      }      ctx.drawImage(bitmap, 0, 0);      bitmap.close();      post(id, 'progress', { stage: 'encoding', fraction: 0.8 });      const blob = await canvas.convertToBlob({ type: mime(to), quality: Number(options.quality) / 100 });      post(id, 'result', { blob });    }  } catch (err) {    post(id, 'error', classify(err));  }};
+The worker needs three more pieces: the size guard that downscales large images, a fallback when convertToBlob does not support a type, and the abort flag check between stages.
+24.5 FFmpeg engine (engines/ffmpeg/FfmpegEngine.ts)
+import { FFmpeg } from '@ffmpeg/ffmpeg';import { fetchFile } from '@ffmpeg/util';import { loadEngineAssets } from './assets';        // cache, hash check, blob URLsimport { buildCommand } from './commands';export class FfmpegEngine implements Engine {  readonly id = 'ffmpeg' as const;  private ff = new FFmpeg();  private loaded = false;  canHandle(i: JobInput) { return ['audio', 'video'].includes(kindOf(i.to)); }  async prepare(onProgress?: (p: JobProgress) => void) {    if (this.loaded) return;    const { coreURL, wasmURL } = await loadEngineAssets(f => onProgress?.({ stage: 'loading-engine', fraction: f }));    await this.ff.load({ coreURL, wasmURL });    this.loaded = true;  }  async run(i: JobInput, onProgress: (p: JobProgress) => void, signal: AbortSignal): Promise<JobResult> {    await this.prepare();    const inName = 'in.' + i.from;    const outName = 'out.' + i.to;    const handler = ({ progress }: { progress: number }) =>      onProgress({ stage: 'converting', fraction: Math.min(1, Math.max(0, progress)) });    this.ff.on('progress', handler);    const abort = () => { this.ff.terminate(); this.loaded = false; };    signal.addEventListener('abort', abort, { once: true });    try {      await this.ff.writeFile(inName, await fetchFile(i.file));      const args = await buildCommand(this.ff, inName, outName, i);   // probe, decide remux or transcode      const code = await this.ff.exec(args);      if (code !== 0) throw makeError('ENCODE_FAILED');      const data = await this.ff.readFile(outName) as Uint8Array;      return toResult(data, i);    } finally {      signal.removeEventListener('abort', abort);      this.ff.off('progress', handler);      try { await this.ff.deleteFile(inName); await this.ff.deleteFile(outName); } catch {}    }  }  dispose() { this.ff.terminate(); this.loaded = false; }}
+The real code must verify the exact names and signatures of the library version in use (for example how exec returns, how terminate behaves and which progress values it emits), and handle the case where the instance was terminated by a cancel.
+24.6 Command builder sketch (engines/ffmpeg/commands.ts)
+export function audioArgs(inName: string, outName: string, to: string, o: Options): string[] {  const base = ['-i', inName, '-vn', '-map_metadata', '0'];  switch (to) {    case 'mp3':  return [...base, '-c:a', 'libmp3lame', '-b:a', `${o.bitrate ?? 192}k`, outName];    case 'm4a':  return [...base, '-c:a', 'aac', '-b:a', `${o.bitrate ?? 192}k`, '-movflags', '+faststart', outName];    case 'wav':  return [...base, '-c:a', 'pcm_s16le', outName];    case 'flac': return [...base, '-c:a', 'flac', '-compression_level', '5', outName];    case 'ogg':  return [...base, '-c:a', 'libvorbis', '-q:a', String(o.quality ?? 5), outName];    case 'opus': return [...base, '-c:a', 'libopus', '-b:a', `${o.bitrate ?? 96}k`, outName];    default: throw makeError('UNSUPPORTED_INPUT');  }}export function videoArgs(inName: string, outName: string, probe: Probe, o: Options): string[] {  const canCopy = probe.video === 'h264' && ['aac', 'mp3', undefined].includes(probe.audio) && !o.forceReencode;  if (canCopy) return ['-i', inName, '-c', 'copy', '-movflags', '+faststart', outName];  const scale = o.height ? ['-vf', `scale=-2:${o.height}`] : ['-vf', 'scale=trunc(iw/2)*2:trunc(ih/2)*2'];  const crf = { high: 20, balanced: 23, small: 28 }[String(o.quality ?? 'balanced')];  return ['-i', inName, ...scale, '-c:v', 'libx264', '-preset', 'veryfast', '-crf', String(crf),          '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-b:a', '128k', '-movflags', '+faststart', outName];}
+24.7 Tool page (app/[slug]/page.tsx)
+import { notFound } from 'next/navigation';import { liveTools, getTool } from '@/registry';import { loadContent } from '@/lib/content';import { ToolShell } from '@/components/tool/ToolShell';export const dynamicParams = false;export function generateStaticParams() { return liveTools().map(t => ({ slug: t.slug })); }export async function generateMetadata({ params }: { params: { slug: string } }) {  const t = getTool(params.slug); if (!t) return {};  return buildMetadata(t);}export default async function ToolPage({ params }: { params: { slug: string } }) {  const tool = getTool(params.slug); if (!tool) notFound();  const content = await loadContent(tool.contentRef);  return (    <main>      <Breadcrumbs tool={tool} />      <ToolHeading tool={tool} intro={content.intro} />      <ToolShell tool={tool} />      <HowItWorks tool={tool} />      <Prose html={content.html} />      <Faq items={content.faqs} />      <RelatedTools tool={tool} />      <JsonLd data={softwareApplicationLd(tool)} />    </main>  );}
+24.8 Privacy network test (tests/e2e/no-upload.spec.ts)
+import { test, expect } from '@playwright/test';import { liveTools } from '../../registry';for (const tool of liveTools()) {  test(`no file data leaves the browser: ${tool.slug}`, async ({ page }) => {    const bodies: number[] = [];    page.on('request', r => { const b = r.postDataBuffer(); if (b) bodies.push(b.length); });    await page.goto('/' + tool.slug);    await page.setInputFiles('input[type=file]', fixtureFor(tool));    await page.getByRole('button', { name: /convert/i }).click();    await expect(page.getByRole('link', { name: /download/i })).toBeVisible({ timeout: 120_000 });    expect(bodies.every(n => n < 2048)).toBe(true);   // only tiny analytics events are allowed  });}
+24.9 Build order inside the code (summary)
+Registry schema and a sample record with validation.
+Tool page with the shell, static content and metadata.
+Detect, memory guard and file naming utilities with unit tests.
+Image worker and engine, then the queue and result UI.
+FFmpeg assets loader, engine, audio command builder.
+Video probe and command builder.
+The SEO check, privacy test and CI wiring.
+Each skeleton above is replaced by tested, complete code as the matching milestone in section 22 is reached.

@@ -1,0 +1,605 @@
+import type { Tool } from '../schema';
+
+// ─── Shared defaults ──────────────────────────────────────────────────────────
+
+const IMAGE_LIMITS = {
+  maxBytes: 100 * 1024 * 1024, // 100 MB hard block
+  warnBytes: 40 * 1024 * 1024, // 40 MB soft warn
+  maxFiles: 50,
+};
+
+const QUALITY_OPTION = {
+  id: 'quality',
+  label: 'Quality',
+  type: 'slider' as const,
+  min: 50,
+  max: 100,
+  step: 1,
+  default: 90,
+  help: 'Higher quality means larger file size.',
+  advanced: false,
+};
+
+const BACKGROUND_OPTION = {
+  id: 'background',
+  label: 'Background colour',
+  type: 'select' as const,
+  choices: [
+    { value: '#ffffff', label: 'White' },
+    { value: '#000000', label: 'Black' },
+    { value: '#f5f5f5', label: 'Light grey' },
+  ],
+  default: '#ffffff',
+  help: 'Fills transparent areas when converting to a format without alpha.',
+  advanced: false,
+};
+
+// ─── Image tools (Wave 1 — highest priority) ──────────────────────────────────
+
+const imageTools: Tool[] = [
+  // heic-to-jpg — top priority
+  {
+    id: 'heic-to-jpg',
+    slug: 'heic-to-jpg',
+    kind: 'convert',
+    department: 'image',
+    from: ['heic'],
+    to: 'jpg',
+    engine: 'image',
+    strategy: 'heic-decode-canvas-encode',
+    options: [QUALITY_OPTION],
+    limits: IMAGE_LIMITS,
+    seo: {
+      primary: 'heic to jpg',
+      title: 'HEIC to JPG Converter — Free, Private, No Upload',
+      description:
+        'Convert iPhone HEIC photos to JPG instantly in your browser. Nothing is uploaded. Free, fast, no signup.',
+      related: ['heic converter', 'heic to jpeg', 'convert heic online'],
+    },
+    contentRef: 'tools/heic-to-jpg.md',
+    related: ['heic-to-png', 'jpg-to-png', 'webp-to-jpg'],
+    wave: 1,
+    status: 'live',
+  },
+  // heic-to-png
+  {
+    id: 'heic-to-png',
+    slug: 'heic-to-png',
+    kind: 'convert',
+    department: 'image',
+    from: ['heic'],
+    to: 'png',
+    engine: 'image',
+    strategy: 'heic-decode-canvas-encode',
+    options: [],
+    limits: IMAGE_LIMITS,
+    seo: {
+      primary: 'heic to png',
+      title: 'HEIC to PNG Converter — Free, Private',
+      description:
+        'Convert HEIC photos to PNG in your browser. Lossless output, transparency preserved. Nothing uploaded.',
+    },
+    contentRef: 'tools/heic-to-png.md',
+    related: ['heic-to-jpg', 'png-to-jpg', 'heic-to-webp'],
+    wave: 1,
+    status: 'live',
+  },
+  // heic-to-webp
+  {
+    id: 'heic-to-webp',
+    slug: 'heic-to-webp',
+    kind: 'convert',
+    department: 'image',
+    from: ['heic'],
+    to: 'webp',
+    engine: 'image',
+    strategy: 'heic-decode-webp-encode',
+    options: [QUALITY_OPTION],
+    limits: IMAGE_LIMITS,
+    seo: {
+      primary: 'heic to webp',
+      title: 'HEIC to WebP Converter — Free, No Upload',
+      description:
+        'Convert HEIC photos to WebP format in your browser. Smaller file size than JPG. Nothing uploaded.',
+    },
+    contentRef: 'tools/heic-to-webp.md',
+    related: ['heic-to-jpg', 'heic-to-png', 'jpg-to-webp'],
+    wave: 2,
+    status: 'draft',
+  },
+  // webp-to-jpg
+  {
+    id: 'webp-to-jpg',
+    slug: 'webp-to-jpg',
+    kind: 'convert',
+    department: 'image',
+    from: ['webp'],
+    to: 'jpg',
+    engine: 'image',
+    strategy: 'canvas-encode',
+    options: [QUALITY_OPTION, BACKGROUND_OPTION],
+    limits: IMAGE_LIMITS,
+    seo: {
+      primary: 'webp to jpg',
+      title: 'WebP to JPG Converter — Free, Private',
+      description:
+        'Convert WebP images to JPG in your browser. No upload, no signup, instant download.',
+    },
+    contentRef: 'tools/webp-to-jpg.md',
+    related: ['webp-to-png', 'jpg-to-webp', 'heic-to-jpg'],
+    wave: 1,
+    status: 'live',
+  },
+  // webp-to-png
+  {
+    id: 'webp-to-png',
+    slug: 'webp-to-png',
+    kind: 'convert',
+    department: 'image',
+    from: ['webp'],
+    to: 'png',
+    engine: 'image',
+    strategy: 'canvas-encode',
+    options: [],
+    limits: IMAGE_LIMITS,
+    seo: {
+      primary: 'webp to png',
+      title: 'WebP to PNG Converter — Free, Private',
+      description:
+        'Convert WebP to PNG losslessly in your browser. Transparency preserved. Nothing uploaded.',
+    },
+    contentRef: 'tools/webp-to-png.md',
+    related: ['webp-to-jpg', 'png-to-webp', 'jpg-to-png'],
+    wave: 1,
+    status: 'live',
+  },
+  // jpg-to-png
+  {
+    id: 'jpg-to-png',
+    slug: 'jpg-to-png',
+    kind: 'convert',
+    department: 'image',
+    from: ['jpg'],
+    to: 'png',
+    engine: 'image',
+    strategy: 'canvas-encode',
+    options: [],
+    limits: IMAGE_LIMITS,
+    seo: {
+      primary: 'jpg to png',
+      title: 'JPG to PNG Converter — Free, Private',
+      description:
+        'Convert JPG images to PNG in your browser. Lossless, no upload, instant. Supports batch conversion.',
+    },
+    contentRef: 'tools/jpg-to-png.md',
+    related: ['png-to-jpg', 'jpg-to-webp', 'webp-to-png'],
+    wave: 1,
+    status: 'live',
+  },
+  // png-to-jpg
+  {
+    id: 'png-to-jpg',
+    slug: 'png-to-jpg',
+    kind: 'convert',
+    department: 'image',
+    from: ['png'],
+    to: 'jpg',
+    engine: 'image',
+    strategy: 'canvas-encode',
+    options: [QUALITY_OPTION, BACKGROUND_OPTION],
+    limits: IMAGE_LIMITS,
+    seo: {
+      primary: 'png to jpg',
+      title: 'PNG to JPG Converter — Free, Private',
+      description:
+        'Convert PNG images to JPG in your browser. Handles transparency. No upload, no signup.',
+    },
+    contentRef: 'tools/png-to-jpg.md',
+    related: ['jpg-to-png', 'png-to-webp', 'heic-to-jpg'],
+    wave: 1,
+    status: 'live',
+  },
+  // jpg-to-webp
+  {
+    id: 'jpg-to-webp',
+    slug: 'jpg-to-webp',
+    kind: 'convert',
+    department: 'image',
+    from: ['jpg'],
+    to: 'webp',
+    engine: 'image',
+    strategy: 'webp-encode',
+    options: [QUALITY_OPTION],
+    limits: IMAGE_LIMITS,
+    seo: {
+      primary: 'jpg to webp',
+      title: 'JPG to WebP Converter — Free, Private',
+      description:
+        'Convert JPG to WebP for smaller file sizes in your browser. Nothing uploaded. Batch supported.',
+    },
+    contentRef: 'tools/jpg-to-webp.md',
+    related: ['webp-to-jpg', 'jpg-to-png', 'png-to-webp'],
+    wave: 2,
+    status: 'draft',
+  },
+  // png-to-webp
+  {
+    id: 'png-to-webp',
+    slug: 'png-to-webp',
+    kind: 'convert',
+    department: 'image',
+    from: ['png'],
+    to: 'webp',
+    engine: 'image',
+    strategy: 'webp-encode',
+    options: [QUALITY_OPTION],
+    limits: IMAGE_LIMITS,
+    seo: {
+      primary: 'png to webp',
+      title: 'PNG to WebP Converter — Free, Private',
+      description:
+        'Convert PNG images to WebP in your browser. Preserve transparency, reduce size. No upload.',
+    },
+    contentRef: 'tools/png-to-webp.md',
+    related: ['webp-to-png', 'jpg-to-webp', 'png-to-jpg'],
+    wave: 2,
+    status: 'draft',
+  },
+  // avif-to-jpg
+  {
+    id: 'avif-to-jpg',
+    slug: 'avif-to-jpg',
+    kind: 'convert',
+    department: 'image',
+    from: ['avif'],
+    to: 'jpg',
+    engine: 'image',
+    strategy: 'avif-decode-canvas-encode',
+    options: [QUALITY_OPTION],
+    limits: IMAGE_LIMITS,
+    seo: {
+      primary: 'avif to jpg',
+      title: 'AVIF to JPG Converter — Free, Private',
+      description:
+        'Convert AVIF images to JPG in your browser. No upload, no signup, works offline after first use.',
+    },
+    contentRef: 'tools/avif-to-jpg.md',
+    related: ['avif-to-png', 'jpg-to-avif', 'heic-to-jpg'],
+    wave: 1,
+    status: 'live',
+  },
+  // avif-to-png
+  {
+    id: 'avif-to-png',
+    slug: 'avif-to-png',
+    kind: 'convert',
+    department: 'image',
+    from: ['avif'],
+    to: 'png',
+    engine: 'image',
+    strategy: 'avif-decode-canvas-encode',
+    options: [],
+    limits: IMAGE_LIMITS,
+    seo: {
+      primary: 'avif to png',
+      title: 'AVIF to PNG Converter — Free, Private',
+      description:
+        'Convert AVIF to PNG in your browser. Lossless output, transparency supported. Nothing uploaded.',
+    },
+    contentRef: 'tools/avif-to-png.md',
+    related: ['avif-to-jpg', 'png-to-jpg', 'webp-to-png'],
+    wave: 2,
+    status: 'draft',
+  },
+  // jpg-to-avif
+  {
+    id: 'jpg-to-avif',
+    slug: 'jpg-to-avif',
+    kind: 'convert',
+    department: 'image',
+    from: ['jpg', 'png', 'webp'],
+    to: 'avif',
+    engine: 'image',
+    strategy: 'avif-encode',
+    options: [
+      {
+        ...QUALITY_OPTION,
+        default: 70,
+        help: 'AVIF encoding is slow. Lower quality encodes faster.',
+      },
+    ],
+    limits: { ...IMAGE_LIMITS, maxBytes: 50 * 1024 * 1024 },
+    seo: {
+      primary: 'jpg to avif',
+      title: 'JPG to AVIF Converter — Free, Private',
+      description:
+        'Convert JPG, PNG or WebP to AVIF for next-gen compression in your browser. Slow but no upload.',
+    },
+    contentRef: 'tools/jpg-to-avif.md',
+    related: ['avif-to-jpg', 'jpg-to-webp', 'png-to-webp'],
+    wave: 3,
+    status: 'draft',
+    notes: 'AVIF encoding is CPU-heavy. Restrict to 50MB. Show speed warning.',
+  },
+  // gif-to-jpg
+  {
+    id: 'gif-to-jpg',
+    slug: 'gif-to-jpg',
+    kind: 'convert',
+    department: 'image',
+    from: ['gif'],
+    to: 'jpg',
+    engine: 'image',
+    strategy: 'first-frame-canvas-encode',
+    options: [QUALITY_OPTION, BACKGROUND_OPTION],
+    limits: IMAGE_LIMITS,
+    seo: {
+      primary: 'gif to jpg',
+      title: 'GIF to JPG Converter — Free, Private',
+      description:
+        'Convert GIF to JPG in your browser. Extracts the first frame. No upload, instant, free.',
+    },
+    contentRef: 'tools/gif-to-jpg.md',
+    related: ['gif-to-png', 'jpg-to-png', 'mp4-to-gif'],
+    wave: 2,
+    status: 'draft',
+  },
+  // gif-to-png
+  {
+    id: 'gif-to-png',
+    slug: 'gif-to-png',
+    kind: 'convert',
+    department: 'image',
+    from: ['gif'],
+    to: 'png',
+    engine: 'image',
+    strategy: 'first-frame-canvas-encode',
+    options: [],
+    limits: IMAGE_LIMITS,
+    seo: {
+      primary: 'gif to png',
+      title: 'GIF to PNG Converter — Free, Private',
+      description:
+        'Convert GIF to PNG with transparency preserved in your browser. First frame extracted. No upload.',
+    },
+    contentRef: 'tools/gif-to-png.md',
+    related: ['gif-to-jpg', 'png-to-jpg', 'mp4-to-gif'],
+    wave: 2,
+    status: 'draft',
+  },
+  // bmp-to-jpg
+  {
+    id: 'bmp-to-jpg',
+    slug: 'bmp-to-jpg',
+    kind: 'convert',
+    department: 'image',
+    from: ['bmp'],
+    to: 'jpg',
+    engine: 'image',
+    strategy: 'canvas-encode',
+    options: [QUALITY_OPTION],
+    limits: IMAGE_LIMITS,
+    seo: {
+      primary: 'bmp to jpg',
+      title: 'BMP to JPG Converter — Free, Private',
+      description:
+        'Convert BMP images to JPG in your browser. Reduce file size dramatically. No upload required.',
+    },
+    contentRef: 'tools/bmp-to-jpg.md',
+    related: ['bmp-to-png', 'jpg-to-png', 'png-to-jpg'],
+    wave: 3,
+    status: 'draft',
+  },
+  // bmp-to-png
+  {
+    id: 'bmp-to-png',
+    slug: 'bmp-to-png',
+    kind: 'convert',
+    department: 'image',
+    from: ['bmp'],
+    to: 'png',
+    engine: 'image',
+    strategy: 'canvas-encode',
+    options: [],
+    limits: IMAGE_LIMITS,
+    seo: {
+      primary: 'bmp to png',
+      title: 'BMP to PNG Converter — Free, Private',
+      description:
+        'Convert BMP to PNG in your browser. Lossless output, no upload, no signup.',
+    },
+    contentRef: 'tools/bmp-to-png.md',
+    related: ['bmp-to-jpg', 'png-to-jpg', 'jpg-to-png'],
+    wave: 3,
+    status: 'draft',
+  },
+  // tiff-to-jpg
+  {
+    id: 'tiff-to-jpg',
+    slug: 'tiff-to-jpg',
+    kind: 'convert',
+    department: 'image',
+    from: ['tiff'],
+    to: 'jpg',
+    engine: 'image',
+    strategy: 'tiff-decode-canvas-encode',
+    options: [QUALITY_OPTION],
+    limits: IMAGE_LIMITS,
+    seo: {
+      primary: 'tiff to jpg',
+      title: 'TIFF to JPG Converter — Free, Private',
+      description:
+        'Convert TIFF images to JPG in your browser. First page of multi-page TIFF extracted. No upload.',
+    },
+    contentRef: 'tools/tiff-to-jpg.md',
+    related: ['tiff-to-png', 'jpg-to-png', 'bmp-to-jpg'],
+    wave: 2,
+    status: 'draft',
+  },
+  // tiff-to-png
+  {
+    id: 'tiff-to-png',
+    slug: 'tiff-to-png',
+    kind: 'convert',
+    department: 'image',
+    from: ['tiff'],
+    to: 'png',
+    engine: 'image',
+    strategy: 'tiff-decode-canvas-encode',
+    options: [],
+    limits: IMAGE_LIMITS,
+    seo: {
+      primary: 'tiff to png',
+      title: 'TIFF to PNG Converter — Free, Private',
+      description:
+        'Convert TIFF to PNG in your browser. Lossless, first page extracted. Nothing uploaded.',
+    },
+    contentRef: 'tools/tiff-to-png.md',
+    related: ['tiff-to-jpg', 'png-to-jpg', 'bmp-to-png'],
+    wave: 3,
+    status: 'draft',
+  },
+  // svg-to-png
+  {
+    id: 'svg-to-png',
+    slug: 'svg-to-png',
+    kind: 'convert',
+    department: 'image',
+    from: ['svg'],
+    to: 'png',
+    engine: 'image',
+    strategy: 'svg-render-canvas-encode',
+    options: [
+      {
+        id: 'width',
+        label: 'Width (px)',
+        type: 'slider',
+        min: 64,
+        max: 4096,
+        step: 64,
+        default: 1024,
+        help: 'Output PNG width in pixels.',
+        advanced: false,
+      },
+    ],
+    limits: IMAGE_LIMITS,
+    seo: {
+      primary: 'svg to png',
+      title: 'SVG to PNG Converter — Free, Private',
+      description:
+        'Convert SVG vector graphics to PNG in your browser. Choose output size. No upload, no signup.',
+    },
+    contentRef: 'tools/svg-to-png.md',
+    related: ['svg-to-jpg', 'png-to-jpg', 'jpg-to-png'],
+    wave: 1,
+    status: 'live',
+  },
+  // svg-to-jpg
+  {
+    id: 'svg-to-jpg',
+    slug: 'svg-to-jpg',
+    kind: 'convert',
+    department: 'image',
+    from: ['svg'],
+    to: 'jpg',
+    engine: 'image',
+    strategy: 'svg-render-canvas-encode',
+    options: [
+      QUALITY_OPTION,
+      BACKGROUND_OPTION,
+      {
+        id: 'width',
+        label: 'Width (px)',
+        type: 'slider',
+        min: 64,
+        max: 4096,
+        step: 64,
+        default: 1024,
+        help: 'Output JPG width in pixels.',
+        advanced: false,
+      },
+    ],
+    limits: IMAGE_LIMITS,
+    seo: {
+      primary: 'svg to jpg',
+      title: 'SVG to JPG Converter — Free, Private',
+      description:
+        'Convert SVG to JPG in your browser. Choose output width. Nothing uploaded.',
+    },
+    contentRef: 'tools/svg-to-jpg.md',
+    related: ['svg-to-png', 'jpg-to-png', 'png-to-jpg'],
+    wave: 2,
+    status: 'draft',
+  },
+  // png-to-ico
+  {
+    id: 'png-to-ico',
+    slug: 'png-to-ico',
+    kind: 'convert',
+    department: 'image',
+    from: ['png'],
+    to: 'ico',
+    engine: 'image',
+    strategy: 'png-to-ico',
+    options: [],
+    limits: { ...IMAGE_LIMITS, maxBytes: 10 * 1024 * 1024 },
+    seo: {
+      primary: 'png to ico',
+      title: 'PNG to ICO Converter — Free Favicon Maker',
+      description:
+        'Convert PNG to ICO favicon in your browser. Outputs all standard sizes (16–256 px). No upload.',
+    },
+    contentRef: 'tools/png-to-ico.md',
+    related: ['svg-to-png', 'jpg-to-png', 'png-to-jpg'],
+    wave: 2,
+    status: 'draft',
+  },
+  // jfif-to-jpg
+  {
+    id: 'jfif-to-jpg',
+    slug: 'jfif-to-jpg',
+    kind: 'convert',
+    department: 'image',
+    from: ['jfif'],
+    to: 'jpg',
+    engine: 'image',
+    strategy: 'canvas-encode',
+    options: [QUALITY_OPTION],
+    limits: IMAGE_LIMITS,
+    seo: {
+      primary: 'jfif to jpg',
+      title: 'JFIF to JPG Converter — Free, Private',
+      description:
+        'Convert JFIF files to JPG in your browser. JFIF is a JPEG variant; this re-encodes with correct extension.',
+    },
+    contentRef: 'tools/jfif-to-jpg.md',
+    related: ['jpg-to-png', 'png-to-jpg', 'webp-to-jpg'],
+    wave: 2,
+    status: 'draft',
+  },
+  // jpeg-to-jpg
+  {
+    id: 'jpeg-to-jpg',
+    slug: 'jpeg-to-jpg',
+    kind: 'convert',
+    department: 'image',
+    from: ['jpeg'],
+    to: 'jpg',
+    engine: 'image',
+    strategy: 'canvas-encode',
+    options: [QUALITY_OPTION],
+    limits: IMAGE_LIMITS,
+    seo: {
+      primary: 'jpeg to jpg',
+      title: 'JPEG to JPG Converter — Free, Private',
+      description:
+        'Convert JPEG files to JPG in your browser. Standardises file extension and re-encodes locally without uploading.',
+    },
+    contentRef: 'tools/jpeg-to-jpg.md',
+    related: ['jpg-to-png', 'png-to-jpg', 'jfif-to-jpg'],
+    wave: 3,
+    status: 'draft',
+  },
+];
+
+export default imageTools;

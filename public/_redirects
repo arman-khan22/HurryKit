@@ -1,0 +1,6 @@
+# Cloudflare Pages / Netlify static redirects
+/jpeg-to-png /jpg-to-png 301
+/png-to-jpeg /png-to-jpg 301
+/heif-to-jpg /heic-to-jpg 301
+/heif-to-png /heic-to-png 301
+/privacy-guarantee /privacy-promise 301

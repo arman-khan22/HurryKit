@@ -1,0 +1,858 @@
+FILE: Hurrykit_?_Product_Vision_Document.txt LEN: 60939
+Hurrykit ? Product Vision Document
+Oct 15, 2026 ? @Arman
+1. How to Read This Document
+This document separates three things that are easy to confuse: what Hurrykit hopes to become, what it plans to build, and what is being built right now. Every tool, department and feature in it carries one of three tags, and nothing should be treated as "coming soon" unless it is tagged that way.
+Tag
+Meaning
+Time horizon
+How firm it is
+Vision
+The direction Hurrykit is heading. It keeps today's decisions coherent with where we want to end up.
+3 to 10 years
+Not scheduled, not committed, not a build order.
+Roadmap
+The sequenced plan of phases, in a meaningful order.
+Next 12 to 24 months
+A strong intention. Order and timing move with real data.
+Current build
+What is being implemented right now. It lives in a separate implementation document, never in this one.
+The current phase only
+The only tier that may be described to anyone as real.
+The promotion rule. Something moves from Vision to Roadmap, and from Roadmap to Current build, only when real evidence pulls it there: search impressions on related pages, user demand, a measured gap, or a cost that no longer blocks it. It never moves simply because it was next on a list.
+How the documents fit together. This Product Vision Document is the single source of truth for what Hurrykit is and why. Each phase gets its own implementation document. Phase 1 (converters) is documented in the Hurrykit ? Phase 1 Implementation Guide (Converters). If the two ever disagree about direction, this document wins. If they disagree about how something is built, the implementation guide wins.
+Reading order. Sections 3 to 5 give the idea. Sections 6 to 12 explain the problem, the audience, the competition and the money. Sections 13 to 15 are the blueprint: the tools, the site structure and the search plan. Sections 16 and 17 cover the plan and what could go wrong.
+2. What This Document Is, and Is Not
+This is the founding reference for Hurrykit: it explains what the product is, who it is for, why it should exist and where it is heading, so that any designer, developer or partner who joins later can understand not only what was decided but why.
+It is:
+The single source of truth for vision, positioning, scope and priorities.
+A record of the reasoning behind decisions, so they can be revisited on purpose instead of drifted away from.
+A guide for judging new ideas: does this fit the vision, and what tier does it belong in?
+It is not:
+A feature specification or an implementation guide. Those live in the phase documents.
+A promise of dates. Roadmap timing moves with real data and with the founder's available hours.
+Marketing copy. It is written to be honest, including about weaknesses and risks.
+Document control
+Item
+Value
+Product name
+Hurrykit (working name, locked 15 October 2026)
+Version
+1.0
+Author and founder
+Arman Khan
+Status
+Draft, founding reference
+Companion documents
+Phase 1 Implementation Guide (Converters). Later phases each get their own guide.
+How it changes
+A change to vision, positioning or scope is made here first, with the date and the reason noted in the change log below.
+Change log
+Date
+Change
+Reason
+15 October 2026
+Version 1.0 written
+Founding draft after the name, outline and tool list were agreed
+3. Executive Summary
+Hurrykit is a brand of fast, free, single-purpose file and media tools that run entirely in the browser, built for people who have an urgent small job and no patience for signups, watermarks or uploads. It starts with converters (image, audio, video) and grows, one department at a time, into the toolkit people reach for when they are in a hurry.
+The idea in one paragraph. Millions of people each day need to turn an iPhone photo into a JPG, shrink a video for WhatsApp, or resize a photo to an exact size for an exam form. They search for the exact job, land on a tool page, and want to be done in under thirty seconds. The strongest existing sites for this (iLoveIMG, CloudConvert, FreeConvert and others) upload your file to a server, cap what you can do for free, and fund themselves with ads and paid tiers. Hurrykit follows the same one-page-per-job structure but does the work on the user's own device. That makes it private by design, removes server limits, and keeps running costs close to zero.
+At a glance
+Item
+Detail
+Category
+Everyday file and media toolkit, one tool per page
+Model
+A brand with many departments, each tool a small config entry on a shared template and engine
+First department
+Converters: image, audio, video (Phase 1)
+How it works
+Files are processed in the browser with WebAssembly and native browser APIs. No upload.
+Audience
+People in a hurry. India first in content (exam forms, WhatsApp media), global in design.
+Revenue
+Display ads and an optional paid tier, later paid AI credits
+Team and pace
+Founder-built, part-time, so everything ships in small, finished units
+Status
+Name locked. Vision and Phase 1 implementation documented. Nothing built yet.
+The bet, stated honestly. This is a distribution game, not a technology moat. Anyone can build an in-browser converter. Hurrykit wins only if it is faster, more trustworthy and more reliable than the alternatives, ranks for the searches people actually make, and keeps adding useful tools faster than competitors can copy them. Traffic compounds over months, not weeks, and the first revenue will be small.
+What success looks like in the first 90 days after launch. Pair pages indexed and earning impressions in Search Console, conversions completing reliably on real phones, and a clear signal about which tools to build next. Section 16 sets the gates in detail.
+4. Brand Identity
+Hurrykit is the name of a feeling as much as a product: the moment before a deadline, and the relief of getting the job done. "Hurry" names the urgency the user arrives with, and "kit" says there is a toolbox behind it that can grow beyond any single tool.
+Why the name works
+It says why people come. Nobody searches for a converter for fun. They are in a hurry, and the name meets them there.
+It is easy to say and spell, in India and abroad: two common English words, pronounced as written, with no unusual letter combinations.
+It does not box us in. "Kit" fits converters, resizers, calculators and AI tools alike, so no rename is needed as departments are added.
+It avoids the "iLove" pattern, so it is not mistaken for, or legally close to, the brand that inspired the structure.
+Honest weaknesses. "Hurry" can suggest stress. The brand answers this by making the outcome calm: the user arrived stressed and leaves relieved. The name is also two ordinary words, so it is not unique in the way an invented word would be, and brand searches will share results with unrelated things until the site earns its own ranking. Because early traffic comes from tool searches such as "heic to jpg" and not from the brand name, this matters less at the start.
+Brand feeling. Calm relief, not panic. Quick, friendly, honest and reliable. Never loud, spammy, gimmicky or condescending.
+Voice. Short, direct sentences. The product speaks like a helpful friend who is also in a hurry.
+Moment
+Example copy
+Landing
+Convert HEIC to JPG. Free, no signup, nothing uploaded.
+Working
+Converting on your device?
+Done
+Done in 4 seconds. Your file never left this device.
+Too large
+This file is big for a phone. It may be slow, but you can try.
+Error
+That file didn't convert. Here is the likely reason, and what to try next.
+Visual direction. Rich, confident colour with one colour per department (for example Image, Audio, Video each have their own), clean white space, rounded shapes, large readable type and fast, light pages. It must look good and work equally well on a phone and on a desktop, in light and dark mode. The logo direction is a clean wordmark with a small forward-motion mark. It must not copy a heart or any other element from existing tool brands.
+Name status (15 October 2026). The name is locked as the working brand. The domain has deliberately not been bought yet, because the site will first be built and hosted on a free tier. Before any public launch, three checks are still to be done and recorded here: an exact-match Google search, the Instagram and YouTube handles, and an India trademark search. On the day of the domain search, hurrykit.com showed as available at a normal registration price on GoDaddy India; this can change, so the domain should be bought before launch.
+5. Vision and Mission
+Mission. Make every small file job a thirty-second job: free, private and done on your own device.
+Vision. Hurrykit becomes the first place people go, by name, when they are in a hurry with a file, a photo, a video or a form. It earns that position by being faster, more trustworthy and more complete than the alternatives, not by being louder.
+What the long term looks like (all Vision tier unless marked)
+A deep catalogue. Hundreds of single-purpose tools across departments (converters, media tools, India form tools, text and Hindi tools, PDF, creator tools, data tools, calculators), all on one engine and one template.
+A trusted brand. Known for three promises: no signup, no watermark, and your files never leave your device. These are published, checkable and never quietly dropped.
+A paid AI tier. Tools that genuinely need servers or GPUs (photo to video, enhancement, auto subtitles) sit behind paid credits, clearly separated from the free, private core.
+Local depth, global reach. Strongest in India (exam forms, WhatsApp media, Hindi and Hinglish), but designed from the first line of code to work worldwide and in more languages.
+Available everywhere. A fast website first, then an installable web app that works offline, and possibly a native app if usage justifies it.
+What Hurrykit will never be
+A downloader for content from platforms such as YouTube or Instagram, or a tool for removing DRM or bypassing paywalls.
+A site that makes the user sign up, watermarks the result, or hides the real limits.
+A site funded by misleading ads, fake download buttons or anything that puts users' devices at risk.
+A place that collects or sells people's files or personal data.
+Why these limits are part of the vision. The weakest sites in this category are the ones people distrust. A brand that keeps a few clear promises, year after year, is the one worth remembering and typing in directly.
+6. Problem Statement
+People with a small, urgent file job are poorly served: the tools that rank for their search make them wait, sign up, hit limits, watch ads and trust their private files to an unknown server.
+The job. Someone has one file and one outcome in mind: turn an iPhone photo into a JPG, make a video small enough for WhatsApp, convert a voice note to MP3, or resize a photo to an exact size for an exam form. They usually have a deadline, often on a phone, and they do not want to learn anything. They search for the exact task, open the first result and expect it to just work.
+Where the current experience fails
+Too many steps. Upload, wait, queue, wait again, download. Some tools also ask for an account.
+Hidden or tight limits. Free tiers cap daily conversions, file size or processing time, and the user often learns this only after uploading.
+Privacy and trust. Most converters send your file to their servers. For ID photos, signatures, family videos or work documents, that is a real concern, and users cannot verify what happens to the file afterwards.
+Ad-heavy, sometimes risky pages. Many sites hide the real button among ads, pop-ups and fake download buttons.
+Poor mobile experience. Many tools were designed for desktop. Pages are heavy and awkward on a phone, which is where much of the demand sits.
+Format friction in everyday life. iPhone photos in HEIC, WhatsApp voice notes in OPUS, and MOV or MKV videos do not open everywhere, so format problems come up again and again.
+India-specific gaps. Exam and government forms demand photos and signatures at exact file sizes and dimensions, with strict rules. The sites that serve this are mostly cluttered and unreliable, and few tools speak Hindi or Hinglish.
+Slow, server-bound processing. When the work happens on a shared server, speed depends on queues and the user's upload bandwidth, which on Indian mobile connections can be slow and expensive.
+Who bears the cost. The student who misses a form deadline because the photo was rejected. The small business owner who cannot send a video. The professional who needs a file in a different format five minutes before a meeting. None of them is making a big decision. They just need a small job done well, and they pay in time and trust.
+Why this is not going away. New formats keep arriving, devices keep disagreeing, and forms keep demanding precise specifications. The need is small, constant and always renewed.
+7. Our Solution
+Hurrykit solves the problem by giving every common file job its own fast page, and by doing the work on the user's device instead of a server.
+Five mechanisms
+One job per page. Each page targets a single search, such as "heic to jpg" or "compress image to 50kb", and does exactly that.
+In-browser processing. Images use the browser's own graphics and WebAssembly codecs. Audio and video use FFmpeg compiled to WebAssembly. The file never leaves the device, so there is no upload wait, no daily server quota and no privacy question to answer.
+One shared system behind many pages. A tool registry, one page template and a small number of engines mean a new tool is mostly a configuration entry and a short content page. This is what makes a large catalogue possible for a small team.
+Honest, visible limits. Where a file is too large or too slow for a phone, Hurrykit says so before the user waits, and lets them try anyway.
+No friction by default. No signup, no watermark, no popups that stand in the way of the real button.
+The thirty-second journey
+The user searches "mov to mp4" and lands on the page.
+They drop, paste or pick the file. Nothing is sent anywhere.
+They see the file, its size and a sensible default output. Options are available but never required.
+They press Convert and watch real progress.
+They download the result, or on a phone save it straight to their files or share it.
+Where a server is used. In Phase 1, nowhere: the site is static pages plus code that runs in the browser. In the far future (Vision tier), paid AI tools may use server or GPU processing. Those will be separated, labelled and opt-in, so the free tools keep their privacy promise.
+What Hurrykit deliberately does not try to be. A full editor, a cloud storage service or an account-based platform. It is a set of quick tools, and each should feel like a light switch.
+8. Product Philosophy
+Hurrykit is built on ten principles, and any feature or tool that breaks one of them needs a very good reason.
+One job, one page. A page does one thing, names it clearly and does it without detours.
+Thirty seconds. From landing to downloaded result, the common case takes about half a minute.
+Files stay on the device. Free tools do their work locally, and the claim is checkable in the browser's network panel.
+No signup, no watermark. Never traded away for revenue.
+Honest limits. The tool says what it cannot do before the user wastes time, and never pretends.
+Quantity through a system, quality through reliability. Many tools are possible only because they share one template and engine. Each tool is allowed to ship only if it works reliably.
+Defaults that just work. The best option is preselected, and advanced controls exist but never block the main path.
+Calm, not shouting. The interface relieves stress instead of adding to it.
+Ship small, measure, then expand. Phases open only when the previous one earns it.
+Do the right thing, even when it costs. No platform downloaders, no DRM or paywall bypass, no misleading ads.
+Built-in standards. These are not separate workstreams. They apply from the first commit, and every page must meet them.
+Standard
+What it means in practice
+Responsive everywhere
+Every page works on every screen size from small phones to wide desktops. There is no separate "mobile site", and a feature is not finished until it works on a phone.
+Mobile-first
+Layouts and touch targets are designed for the phone first, then widened.
+Fast on modest hardware
+A strict page-weight and loading budget. Heavy engines load only on the pages that need them, and only when needed.
+Light and dark
+Both themes are supported from the start through colour tokens.
+Accessible
+Keyboard use, readable contrast, clear focus and screen-reader announcements for progress and errors.
+Private by design
+No file leaves the device, no accounts in the early phases, and minimal analytics that never include file content or names.
+Resilient
+Clear, friendly errors and recovery for large files, unsupported files and failed engines.
+Search-ready
+Pre-rendered pages, unique content per page and clean structure, covered in Sections 14 and 15.
+Translation-ready
+All visible text is kept apart from code so Hindi and other languages can be added without a rewrite.
+How the principles settle arguments. When two ideas conflict, the earlier principle in this list usually wins over the later one, except principles 3, 4 and 10, which are fixed.
+9. Target Audience
+Hurrykit's audience is defined by a situation, not a demographic: a person in a hurry with a small file job. Six groups share that situation, and they are served in the order below.
+#
+Group
+Typical job
+Usual device
+What makes them choose a tool
+Priority
+1
+Students and exam applicants (India)
+Resize a photo or signature to an exact size for a form, compress a scan, convert a photo to the required format
+Phone, sometimes a cyber cafe PC
+Works first time, matches the form's rules, nothing to install
+Core (Phase 3 tools, but high search value from the start)
+2
+Everyday smartphone users
+Open an iPhone HEIC photo on Windows, turn a WhatsApp voice note into MP3, play a MOV or MKV
+Phone and laptop
+Instant, free, no account, trustworthy
+Core (Phase 1)
+3
+Creators and small businesses
+Make a video smaller or the right shape for Reels, WhatsApp or YouTube, make a GIF, resize a thumbnail
+Phone and laptop
+Speed, no watermark, the right output size
+Core (Phases 1 to 2)
+4
+Working professionals
+Convert a screenshot, audio recording or video for a deadline, shrink a file to fit an upload limit
+Laptop
+Privacy of work files, reliability
+Secondary
+5
+Global long-tail users
+The same conversions in English-speaking and other markets
+Mixed
+Same as above
+Secondary, grows automatically with search
+6
+Developers, analysts and tinkerers
+CSV and JSON tools, formatters, QR codes
+Laptop
+Clean, quick, no clutter
+Later (Phase 4)
+What they share. They are time-pressed, they arrive from a search for the exact task, they will not read instructions and they will leave a site the moment it asks for an account. They do not come back because of loyalty. They come back because the tool was fast and trustworthy last time.
+What differs.
+Device and data. Many Indian users are on mid-range or low-end Android phones with limited memory and mobile data. This shapes file-size limits, engine download sizes and the loading strategy.
+Language. Many search in English, Hindi or a mix of both. Early pages are English. Hindi pages are a Roadmap item.
+Trust. Students handling ID photos and signatures are especially sensitive to where their files go. The "nothing uploaded" promise matters most to them.
+How India-first and global fit together. The product, design and code are global from day one. India shapes which tools come first and which phrases pages are written for, because that is where competition is thinner and where the founder can learn fastest. Global traffic for the same conversions is expected to arrive on the same pages without extra work.
+Not the audience. Enterprises that need audit trails and contracts, and anyone looking to download from platforms or remove protections. Hurrykit is not built for them and will not be extended to serve them.
+10. Positioning
+Hurrykit positions itself as the private, no-friction toolkit for people in a hurry: it does the job on your device, so there is nothing to upload, sign up for or wait for.
+Positioning statement. For people with an urgent small file job, Hurrykit is the toolkit that finishes it in about thirty seconds, on their own device, with no signup and no watermark. Unlike converter sites that upload your file and cap your free use, Hurrykit works locally, so it is private, has no server queue and has no daily quota.
+The three pillars
+Pillar
+The promise
+The proof the user can see
+Fast
+Done in about thirty seconds
+A live progress bar and the time taken shown at the end
+Private
+Your file never leaves your device
+A plain-language note on every tool, and the network panel shows nothing leaving
+Frictionless
+No signup, no watermark, no queue
+None is ever shown
+Where it sits in the market. Between the big server-based converters (broad format support but upload, limits and ads) and the single-purpose or open-source in-browser tools (private but narrow or technical). Hurrykit aims to be as broad and approachable as the first group and as private as the second, with India-specific depth that neither offers.
+Message by audience
+Students: "Fits the form. Nothing uploaded."
+Everyday users: "Opens anywhere. One tap."
+Creators: "Right size, no watermark."
+Professionals: "Your files stay on your device."
+What Hurrykit does not claim. It does not claim to be the biggest, the most feature-rich or an all-in-one editor. It does not claim to be faster than a powerful server for very large video files, because browsers have limits. Positioning stays tied to what the product reliably delivers.
+How positioning changes over time. Early on, "private and free" is the differentiator. Once the catalogue is large, "the whole toolkit in one place" becomes the stronger claim. When AI tools arrive, "the free, private core" remains the promise, and AI is clearly labelled as the separate, paid part.
+11. Competitive Analysis
+The converter and image-tool space is crowded with strong, long-established, server-based players, but almost all of them are built around the same constraint: your file goes to their server, so limits, queues and paid tiers follow. Hurrykit's opening is the part they structurally cannot copy cheaply: unlimited, private, on-device processing, combined with India-specific depth. As of 15 October 2026. Figures below come from the vendors' own pages where I could open them, and from dated reviews where I could not. Each row says which.
+A. Server-based general converters (the head-on competition)
+Competitor
+Free limits
+Paid
+Weak points for the user
+Hurrykit angle
+CloudConvert
+10 conversions per day, 1 GB max file, 5 minutes processing per task, low priority, up to 5 concurrent tasks (vendor page)
+Credit packs (1,000 credits) and a monthly subscription; prices did not load when checked
+Daily cap and low-priority queue on free use. Files are uploaded.
+No daily cap, no queue. Nothing uploaded.
+FreeConvert
+20 conversion minutes per day, 5 minutes per file. No signup for web use (vendor page)
+$12.99, $24.99 and $29.99 per month (1,500, 2,000 and 4,000 minutes; 1.5, 2 and 5 GB files). Paid plans are ad-free.
+Minute-based caps; the free tier clearly exists to sell the paid one. Files are uploaded.
+Time is not rationed. Hurrykit's "limit" is the user's own device.
+Convertio
+100 MB per file (TechRadar review, 22 Nov 2021)
+$9.99 to $25.99 per month (same review)
+The review notes online conversion is impractical for large files on slow connections. Figures are dated and should be re-checked.
+No upload wait, which matters on slow Indian mobile data.
+Zamzar
+50 MB per file and 2 online conversions per 24 hours (TechRadar review, 16 Aug 2022)
+$9, $16 and $25 per month (same review)
+Very tight free quota. Figures are dated. Strength: very wide format coverage (documents, images, audio, video, eBooks, archives, CAD).
+No quota. Hurrykit will not match their format breadth, so it competes on the common formats only.
+B. Image and media specialists
+Competitor
+What it is
+Limits and model
+Hurrykit angle
+iLoveIMG (a sibling of iLovePDF)
+The closest model for Hurrykit: a grid of single-purpose image tools
+Free with ads: 30 files and 200 MB per task for compress, resize and convert; crop and the editor handle 1 file; remove background and upscale limited to 6 MB. Premium $5 per month billed annually ($60), or $9 monthly, ad-free, up to 120 files and 4 GB per task (vendor page).
+Same page-per-job structure, but local processing (no 200 MB cap, no upload) and a media department (audio, video) that iLoveIMG does not cover.
+Clideo
+Online video tools (trim, merge, compress, convert)
+Free outputs carry a watermark. Paid $9 per month or $6 per month billed annually. Processes videos online. (Review by a competitor, updated 11 Jan 2026, so treat as indicative.)
+No watermark. No upload for common video jobs.
+123apps, VEED, Kapwing
+Browser-based audio, video and editing suites
+Not researched for this version. Check their free limits and watermarks before relying on any claim.
+To be completed in the first quarterly review.
+C. Local, in-browser peers (the closest in approach)
+Competitor
+What it is
+Notes
+Hurrykit angle
+VERT
+Open-source (AGPL-3.0) file converter that runs mostly in the browser via WebAssembly. Claims 250+ formats and no file-size limits (project page).
+Video conversion off a self-hosted setup uses the project's hosted instance, so it is not fully local out of the box. Aimed at technical users. A hosted site, not a one-page-per-job SEO brand.
+Hurrykit is the consumer, search-driven, per-job version, with mobile-first UX and India-specific tools.
+Squoosh
+Google Chrome Labs image compressor using WebAssembly codecs (MozJPEG, WebP, AVIF, OxiPNG)
+One image at a time, no batch. Local processing, though the app sends some analytics such as file sizes.
+Batch work, more jobs than compression, and the same private promise.
+India exam photo resizers (for example onlineresult.in)
+Many small sites with exam presets (SSC, UPSC, NEET, JEE, GATE and others), photo and signature resizing, name-and-date overlay, English and Hindi
+One such site says it processes "100% locally in browser" (its own claim). Several near-identical sites exist, and the same page notes that specification details differ between sections, so accuracy is a weak point.
+Fragmented market. Hurrykit can win on reliability, accurate specs tied to official notices, and a mobile-first experience.
+Small toolkit sites (for example zapkit.in, observed 14 October 2026)
+A grid of dev and utility tools, including an image converter
+Shows that small tool-grid sites already exist and that a bare tool grid is not a differentiator.
+Depth, quality and search presence are what count.
+D. Indirect competition
+The operating system. Windows 11 does not open HEIC photos by default. A 2021 article says it needs the HEIF Image Extensions and, for HEVC video, the paid HEVC Video Extensions ($0.99 then). This is why HEIC conversion searches exist, but it may change, so check current Windows behaviour. iPhones and Macs can export to JPG themselves.
+Desktop apps. VLC, HandBrake and the FFmpeg command line. Free, powerful and trusted by technical users, but they require installation and know-how.
+AI search and chat answers. Search engines and AI assistants increasingly answer "how do I convert X" directly, sometimes without a click. This is a threat to traffic, not to the tools themselves.
+What the incumbents are good at
+Search presence. Years of ranking, backlinks and brand recall for the head terms. This is their strongest asset and cannot be matched quickly.
+Breadth. Zamzar-style format coverage and document conversions that need server software.
+Heavy jobs. Large video, OCR and AI work are easier on a powerful server than in a phone's browser.
+Revenue machines. They have paying users, so they can invest in speed, support and marketing.
+Where they are structurally weak
+Server economics force limits. Every conversion costs them compute and bandwidth, so free use must be capped (CloudConvert's 10 conversions a day and FreeConvert's 20 minutes a day are examples). Hurrykit's marginal cost per conversion is near zero because the user's device does the work.
+Upload and wait. Speed depends on the user's upload bandwidth and the provider's queue.
+Privacy cannot be proved. A user must trust a server's deletion policy.
+Ads and upsell pressure. Free tiers exist to sell paid ones, which shapes the whole experience.
+Where Hurrykit is weak
+No search authority at launch. A new domain starts with no backlinks. Months pass before head terms are realistic.
+Browser limits. Large videos can fail or crawl on a low-end phone, and iOS Safari is stricter than desktop Chrome.
+Narrower formats. Hurrykit will cover common formats, not hundreds.
+No technology moat. Others can build the same thing. VERT already proves it.
+Brand. An unknown name competes against names people already trust.
+Strategy that follows
+Do not fight on the head terms first ("mp4 converter", "jpg to png"). Win the long tail: specific pairs such as "heic to jpg", "opus to mp3" and "mov to mp4", then climb.
+Own a niche early. India exam photo and signature tools are fragmented and quality is uneven. Doing it accurately and reliably is a realistic first foothold.
+Make the private claim visible and provable. It is the single difference that is hard for server-based competitors to match.
+Beat them on mobile. Fast load, big touch targets, no popups, save-to-phone that works.
+Ship breadth through the shared system, because a bare grid of tools is not enough, but a large, reliable catalogue is.
+Threat scenarios
+Scenario
+Likelihood
+Response
+An incumbent adds a local, in-browser mode
+Medium over time
+Already be established on the long tail and in India; compete on speed, UX and breadth of departments
+A copycat clones Hurrykit's tools
+High and ongoing
+Cannot be prevented. Win on trust, reliability, content quality and being first to new tools
+AI answers reduce clicks
+Medium
+Focus on queries that need a tool, and build a direct brand so users return by name
+Large players (Google, Adobe, Canva) offer the same free
+Low to medium
+Stay specific: exam forms, formats and WhatsApp media that general products ignore
+Monitoring plan
+Every quarter: record the top ten search results for each of the top 30 target keywords, note each result's free limits, watermarking, ads and upload behaviour, and update this section with the date. Refresh the dated figures above (Convertio, Zamzar, Clideo, Windows) and complete the 123apps, VEED and Kapwing rows.
+Sources
+Opened for this section on 15 October 2026: CloudConvert pricing, FreeConvert pricing, iLoveIMG pricing, VERT on GitHub, TechRadar on Convertio (Nov 2021), TechRadar on Zamzar (Aug 2022), Clideo review by SendShort (Jan 2026), Squoosh overview by Transloadit, Exam Photo Resizer on onlineresult.in, and Winaero on HEIC and HEVC in Windows 11 (Jul 2021).
+12. Business Model
+Hurrykit's free tools stay free; money comes from scale, through ads first, then an optional paid tier, and later paid AI credits. Because processing happens on the user's device, running costs stay close to zero, so almost every rupee of revenue is margin. The real cost is the founder's time.
+Revenue streams
+Stream
+Tier
+How it works
+Honest note
+Display ads
+Roadmap
+Ads on tool and guide pages once traffic and content quality justify it
+Ad revenue per visit is lower in India, and ad networks reject thin or low-value sites. Launch ad-free, build real traffic and content first, and add ads when approval is realistic. Ads must never cover the main button or add pop-ups.
+Hurrykit Plus
+Roadmap
+A low-priced optional plan that removes ads and adds conveniences: larger batches, saved presets and (later) history across devices
+Gating a local tool is harder than gating a server tool, because the limit is the user's device and not our cost. Plus must sell convenience, not capacity. For scale, iLoveIMG's Premium is $5 per month billed annually, $9 monthly (vendor page). Pricing for India will be set lower and tested.
+AI credits
+Vision
+Paid credits for tools that genuinely need servers or GPUs (photo to video, enhancement, auto subtitles)
+Costs scale with use, so these are never offered free without limits. Moderation is required from the first day.
+Embeddable tools and partnerships
+Vision
+Exam-photo widgets for coaching sites and education portals, referral and affiliate links where honest and relevant
+Only after the audience exists.
+Costs
+Item
+Phase 1 estimate
+Notes
+Hosting
+Free tier
+Static pages on a free host. Limits apply and are covered in the implementation guide.
+Domain
+About ?1,000 to ?1,600 a year
+Seen on GoDaddy India for hurrykit.com on 15 October 2026 (a first-year promotional price, then a higher renewal price).
+Engine file storage and delivery
+Free tier
+The large FFmpeg engine file needs its own free storage.
+Analytics and error logging
+Free tier
+Privacy-friendly options only.
+Founder's time
+The main cost
+Part-time. Everything is scoped to fit.
+AI processing
+Not in Phase 1
+Variable and usage-based when introduced, which is why it is paid.
+Unit economics in plain words. A visitor who converts a file costs almost nothing to serve. Revenue per visitor is small, so the business depends on many visitors and many tools. A realistic expectation is that the first months bring little or no income while search traffic builds. Treat early revenue as a bonus, not a plan.
+Principles
+The privacy promise and the no-signup, no-watermark promise are never traded for revenue.
+Ads and Plus are introduced only when the product is already trusted.
+Paid tiers sell speed of workflow and convenience, not the ability to do the basic job.
+Every revenue experiment is measured, and unprofitable ones are dropped.
+13. Complete Tool and Module List
+Hurrykit is a set of departments, each a family of single-purpose tools on one shared template and a small number of engines. This section lists everything the brand can hold. Each department carries its phase and tier, and nothing here is built until the Roadmap and the phase documents say so.
+How the ecosystem fits together
+Engines do the work: an image engine (browser graphics and WebAssembly codecs), an FFmpeg engine (audio and video in WebAssembly), a text engine, a data engine, and later an AI service (the only server-side part).
+Departments group tools for people and for search: Converters, Media Tools, Resizers and Form Photos, Text and Hindi, PDF, Creator, Data and Developer, Calculators, and AI.
+Tools are single pages, each targeting one job and one search. Conversion pairs ("mov to mp4") are pages generated from one converter engine, not separate software.
+Hubs are department pages that link every tool in the department, and the home page links the departments.
+Department overview
+Department
+Phase
+Tier
+Main engine
+Sample tools
+Converters: image, audio, video
+1
+Roadmap, then current build
+Image engine, FFmpeg
+HEIC to JPG, OPUS to MP3, MOV to MP4
+Media tools: video, audio, image
+2
+Roadmap
+FFmpeg, image engine
+Compress video, trim audio, crop image
+Resizers and form photos (India)
+3
+Roadmap
+Image engine
+Photo to 20 KB, signature resizer, passport sheet
+Text and Hindi
+3
+Roadmap
+Text engine
+Kruti Dev to Unicode, word counter
+PDF
+4
+Vision
+PDF engine
+Merge PDF, compress PDF to 200 KB
+Creator and social
+4
+Vision
+Image engine, FFmpeg
+WhatsApp sticker maker, thumbnail resizer
+Data and developer
+4
+Vision
+Data engine
+CSV to JSON, QR generator
+Calculators (India-heavy)
+4
+Vision
+Data engine
+Age calculator, CGPA to percentage
+AI
+5
+Vision
+AI service
+Photo to GIF, upscaler, auto subtitles
+Phase 1: Converters (documented in the Phase 1 Implementation Guide)
+Image: HEIC and HEIF to JPG, PNG and WebP; JPG, PNG and WebP to each other; AVIF to JPG and PNG; GIF, BMP and TIFF to JPG and PNG; SVG to PNG and JPG; PNG to ICO (favicon); JFIF and JPEG to JPG. Later in the department: RAW (CR2, NEF, ARW) and PSD.
+Audio: MP3, WAV, AAC, M4A, FLAC, OGG, OPUS, WMA and AIFF in the common directions. High-demand pairs include OPUS to MP3 (WhatsApp voice notes), AMR to MP3, M4A to MP3 and WAV to MP3.
+Video: MOV, MKV, AVI, WebM, WMV, FLV, 3GP, M4V and MPEG to MP4; MP4 to MOV and WebM; HEVC (H.265) to H.264 for iPhone videos; MP4 to GIF and back; video to MP3.
+Hub and general pages: Image Converter, Audio Converter, Video Converter, and a general file converter page.
+Phase 2: Deeper media tools
+Video: compress (target size for WhatsApp, email or Discord), trim, merge, crop, resize, rotate and flip, mute, add or replace audio, speed up and slow down, reverse, loop, extract frames or a thumbnail, split into parts (including WhatsApp status), change aspect ratio for Reels, Shorts and Stories, add blur bars, add text or subtitles, add a watermark, frame-rate changer, browser screen recorder and webcam recorder.
+Audio: trim, merge, volume boost, normalise, change speed or pitch, reverse, fade in and out, remove silence, compress, change bitrate and sample rate, stereo to mono, split, ringtone maker, voice recorder. Noise reduction in the browser may come late in this phase.
+Image: compress, resize (pixels, percent, cm, inches), crop, rotate and flip, add text, watermark, border and frame, blur, black-and-white and filters, collage and merger, grid splitter for Instagram, circle crop for profile pictures, transparent PNG maker, colour picker and palette extractor, EXIF viewer and remover, DPI changer, image OCR including Hindi.
+Phase 3: Resizers, form photos and text (India-first)
+Form and exam photos: photo resizer to an exact file size and exact dimensions, signature resizer, thumb-impression resizer, passport photo maker, passport photo print sheet (A4 with several photos), photo and signature on one sheet, name-and-date strip on a photo, background to white, exam presets (SSC, UPSC, banking, railways, NEET, JEE, CUET, GATE, state exams), and compress an image or PDF to 20, 50, 100 or 200 KB.
+Text and Hindi: Kruti Dev to Unicode and back, Hindi typing (Roman to Devanagari), numbers to words in English and Hindi, rupee amount to words for cheques, word and character counter, case converter, remove duplicate lines, sort lines, find and replace, text diff, reading time, fancy text generator for Instagram bios, speech to text in Hindi.
+Phase 4: More departments (Vision)
+PDF: merge, split, compress, PDF to JPG and PNG, JPG to PDF, rotate, organise pages, page numbers, watermark, protect, sign, scan to PDF with the camera, extract images, PDF to text. Unlock only for files where the user knows the password.
+Creator and social: thumbnail and Instagram, YouTube and WhatsApp size resizers, WhatsApp sticker maker (512 by 512 WebP), WhatsApp DP maker, GIF maker from images or video, GIF compressor and resizer, meme maker, aspect-ratio calculator, social media size chart.
+Data and developer: CSV, JSON and Excel converters, merge and split CSV, remove duplicates, JSON, XML and YAML formatters, Base64, URL encode and decode, hash generator, UUID and password generator, QR generator and scanner, barcode generator, colour converter, regex tester, timestamp converter, diff checker, minifiers, JWT decoder.
+Calculators: age calculator (for exam eligibility), CGPA to percentage and back, percentage and marks, GST, EMI, SIP, date difference, unit converter, BMI.
+Phase 5: AI (Vision, paid credits)
+Photo to GIF or live photo, image to video, prompt-based photo or video enhancement, high-quality background remover, upscaler, old-photo restoration, colourise black and white, object remover, automatic face blur, auto subtitles in Hindi and Hinglish, subtitle translation, dubbing, text to speech and transcription.
+Out of scope, permanently
+Platform downloaders (YouTube, Instagram and similar), DRM or paywall bypass, tools whose main use is faking documents, and bulk scraping.
+How a tool is defined
+Every tool, in every phase, is described by the same record: its name and URL, the job it does, the search phrase it targets, the engine it uses, its department, its phase and tier, the options it offers, its limits, and the unique content written for its page. A new tool is only allowed to ship when that record is complete. The exact fields live in the implementation guide.
+14. Information Architecture
+The site is shallow and flat by design: a home page, a handful of department hubs, and one page per tool, so any tool is two clicks from the home page and one search away. This section is the blueprint every page is built against.
+Principles
+One page, one job, one primary search phrase.
+Flat URLs that match what people search, such as /heic-to-jpg, not /tools/image/convert/heic-to-jpg.
+Hubs for people and for search. Each department hub lists all its tools and links back to the home page.
+Everything is within three clicks of the home page, and any tool is reachable by search from every page.
+Structure is data-driven. Pages, hubs, navigation and the sitemap are all generated from the tool registry, so structure never drifts from content.
+URL scheme
+Page type
+Pattern
+Example
+Notes
+Home
+/
+/
+Search box, department cards, popular tools
+Department hub
+/image-converter, /audio-converter, /video-converter in Phase 1; later /image-tools, /video-tools, /forms, /text-tools, /pdf-tools, /data-tools, /calculators, /ai-tools
+/video-converter
+Lists every tool in the department
+Tool or conversion page
+/{job-slug}
+/heic-to-jpg, /compress-video
+The main landing pages
+Format page
+/formats/{format}
+/formats/heic
+Explains a format and links every conversion involving it
+Guide
+/guides/{slug}
+/guides/open-heic-on-windows
+Search-led help articles that link into tools
+Exam specification page
+/forms/{exam}-photo-signature-size
+/forms/ssc-photo-signature-size
+Verified against the official notification, with a last-checked date
+Trust page
+/privacy-promise
+/privacy-promise
+Explains and proves the no-upload claim
+Legal and company
+/about, /contact, /privacy, /terms, /cookies
+/privacy
+Required for trust and for ad networks
+Language variants
+/hi/...
+/hi/heic-to-jpg
+Roadmap, after English pages are established
+Slug rules. Lowercase, hyphen-separated, format names as people write them (mov-to-mp4, 3gp-to-mp4), verbs for jobs (compress-video, trim-audio). Reverse directions are separate pages (jpg-to-png and png-to-jpg) because they are separate searches. Common spellings that people search become their own pages only when they carry real content (for example heif-to-jpg); otherwise they redirect to the main page.
+Page types and what each contains
+Home page. A search box that jumps to a tool; the department cards in their own colours; the most popular tools; a short "why Hurrykit" strip with the three promises; and links to guides. It loads quickly and loads no conversion engines.
+Department hub. A title, a one-line description, the full tool list as cards (with a search filter once a department is large), a short explanation of the department, and links to related departments and format pages.
+Tool page (the template every conversion and tool page uses), in this order:
+Header with the site name, search and navigation
+Breadcrumb (Home, department, tool)
+H1 with the job in plain words
+One-line promise (free, nothing uploaded)
+The tool itself (drop zone, options, progress, results)
+How it works in three or four steps
+Why people convert this (short, unique)
+Format facts (what each format is, and when to choose which)
+Limits and tips specific to this conversion
+Frequently asked questions (unique to the page)
+Related tools
+Footer
+Format page. What the format is, where it comes from, which devices and apps support it, pros and cons, and links to every conversion that involves it.
+Guide page. A practical article that answers a search question and links into the tool that solves it.
+Exam specification page. The official size and dimension rules for a form, the date they were last checked against the notice, the link to the tool that satisfies them, and a note to confirm against the official portal.
+Global navigation
+Header. Logo on the left, a prominent search field in the middle (with a keyboard shortcut on desktop), a department menu, and a theme toggle. On phones, the header is compact: logo, search icon and a menu that opens a full-screen list of departments.
+Footer. Departments, popular tools, guides, and company and legal links.
+Search. One search that finds a tool by job, format or common phrase ("heic", "whatsapp audio", "exam photo") and jumps to it.
+Recently used and favourites. Stored only on the user's device, to bring people straight back to their tools.
+Internal linking rules
+Every tool page links to its hub, three to six related tools (the reverse direction first), the relevant format pages, and one guide where it exists.
+Every hub links to every tool in the department.
+Format pages link to every pair involving the format.
+Guides link to the tool that solves the problem in the first paragraph.
+No page is more than three clicks from the home page. No page is an orphan.
+Technical structure rules
+Each page has one canonical URL. Alias URLs redirect permanently.
+The sitemap is generated from the registry and split by page type.
+A friendly 404 page offers search and the department list.
+Pages in draft or below the quality bar are kept out of the sitemap and marked not to be indexed until they pass.
+Planned later
+/plus (the paid plan), /account (only when accounts exist), /ai-tools, a blog or news page, a Hindi site under /hi/, and an installable web app.
+Responsive structure
+Every page type uses one layout system that adapts from small phones to wide desktops: one column on phones, the tool and its surrounding content stacked in a logical reading order, and a wider two-part layout on large screens. There is no separate mobile site.
+15. SEO Strategy
+Search is the main way people will find Hurrykit. The plan is to earn rankings page by page, with real content on every page, in waves small enough that quality never slips. No ranking is guaranteed, and the plan assumes slow early results on a new site.
+Step 1: Set up the foundations (before any page goes live)
+Register the site in Google Search Console and Bing Webmaster Tools, and verify ownership.
+Use one preferred domain and force HTTPS. Redirect any alternate host permanently.
+Generate robots.txt and an XML sitemap from the tool registry, split by page type, and submit the sitemap.
+Give every page a unique title, meta description, one H1 and a self-referencing canonical URL.
+Make pages fast and stable: fast first paint, no layout jumps, conversion engines loaded only when a tool is used.
+Set up privacy-friendly analytics and a spreadsheet to track rankings and clicks per page.
+Step 2: Research the keywords
+Build the seed list from the tool registry (every format pair and job).
+Collect search volume and competition from free sources: Google Search Console once data exists, Google autocomplete and "people also ask", Google Trends for India versus global, and a free keyword tool.
+Look at the top results for each target phrase and note what the page needs that competitors lack.
+Group phrases by intent: do-it-now ("heic to jpg"), how-to ("open heic on windows"), and compare ("heic vs jpg").
+Score each phrase by demand, competition and fit with Hurrykit, and write the result into the registry as the page's primary phrase.
+Treat volumes as estimates, not promises.
+Step 3: Pick the first wave
+Start with the highest-demand, easiest-to-win conversions where a browser tool is clearly better than a server tool, for example HEIC to JPG, OPUS to MP3, MOV to MP4, MP4 to MP3, WebP to JPG, AVIF to JPG and video to GIF.
+Launch these as 15 to 25 well-built pages, not hundreds.
+Add each following wave only after the previous wave is indexed and showing impressions.
+Step 4: Write each page properly
+Every page must clear this bar before it is allowed into the sitemap:
+Element
+Rule
+Title
+Primary phrase first, under about 60 characters, with the brand last
+Meta description
+One honest sentence about the job and the promise, under about 155 characters
+H1
+The job in plain words
+Intro
+Two sentences that answer the search at once and point at the tool
+Tool
+Works on first load without signup
+Unique content
+At least 250 to 400 words written for this conversion: why people need it, format differences, quality or size effects, and limits
+FAQ
+Three to six questions that apply to this page alone
+Related links
+Reverse direction, department hub, format pages and a guide
+Images
+Real screenshots or diagrams with alt text
+Not allowed
+Copy-pasted paragraphs repeated across pages with only the format name swapped
+Step 5: Structured data and snippets
+Mark each tool page as a software application and each page with breadcrumbs. Validate them with Google's testing tools.
+Add FAQ and how-to markup only as a secondary measure. Google restricts the rich results for these, so no ranking or traffic plan relies on them.
+Write the first lines so they can be used as a direct answer.
+Step 6: Build supporting content
+Format pages for each format, linked to every conversion involving it.
+Guides for the questions behind the searches, for example "how to open HEIC on Windows" or "why WhatsApp audio is OPUS".
+Exam specification pages in Phase 3, each verified against the official notice, dated and kept up to date.
+Each guide links to its tool near the top.
+Step 7: Internal linking
+Follow the rules in section 14. Link reverse directions to each other, hubs to every tool, and guides to tools. Check for orphan pages after each wave.
+Step 8: Earn trust and links
+Publish the privacy promise page, with a way for people to verify it (for example, the network tab stays quiet during a conversion).
+Create honest comparison posts and a short, useful explainer on browser-based processing.
+Share in relevant communities where it is welcome, without spamming, and submit to reputable tool directories.
+Never buy links or use link schemes.
+Step 9: India and language
+Target English search phrases first, then Hinglish phrases people actually type ("photo ka size kam kare").
+Add Hindi pages under /hi/ only after English pages are indexed. Translate with care, and have a native speaker review each page.
+Use proper language tags and alternate-language links when Hindi pages exist.
+Step 10: Measure and iterate
+Cadence
+Check
+Action
+Weekly
+Search Console: pages indexed, impressions, clicks, queries
+Fix crawl and indexing errors; note pages with impressions but no clicks
+Monthly
+Per-page ranking, click-through rate, conversion completion rate
+Rewrite titles and intros for pages with low click-through; expand pages that rank 8 to 20
+Per wave
+Share of the wave indexed after 4 to 6 weeks
+If under half, stop adding pages and improve quality first
+Quarterly
+Competitor changes, Core Web Vitals, content refresh
+Update stale pages, remove or merge weak ones
+Step 11: Avoid thin and duplicate content
+Never publish a page whose content differs only by the format names.
+Merge or redirect pages that cannot justify their own content. For example, a near-duplicate spelling should redirect.
+Keep unfinished pages out of the sitemap and marked not to be indexed.
+Do not use AI-generated filler. Any generated draft is edited and checked against how the tool really behaves.
+Technical checklist (pre-launch and per wave)
+Every page returns a 200 status code with unique title, description and canonical.
+The sitemap lists only indexable pages and is accepted in Search Console.
+Mobile layout is verified on real devices.
+Core Web Vitals pass on a mid-range phone.
+No broken internal links, no redirect chains.
+The tool works with scripts blocked from ad networks, and the page remains usable if the engine fails to load.
+Realistic expectations
+A new domain commonly takes months to earn meaningful rankings, and the biggest competitors have years of authority. The advantage here is being faster, simpler and more trustworthy on narrow searches, plus many specific long-tail pages. Success is measured first by pages indexed and impressions, then by clicks, and only later by revenue.
+16. Roadmap
+The roadmap is ordered by value and risk, not by calendar promises. The founder works part-time, so each phase has a gate: the next phase starts only when the gate is met. Durations are estimates for part-time work and will move.
+Phase
+Focus
+Estimated duration
+Gate to move on
+P1. Converters
+Image, audio and video converters, the shared template and registry, first SEO wave
+About 14 weeks
+First wave live and indexed; conversions succeed reliably on real phones and low-end laptops; trust and legal pages live
+P2. Deeper media tools
+Compress, trim, merge, resize, crop and the rest of the media list
+About 10 to 12 weeks
+Steady growth in impressions and clicks; no major open bugs
+P3. Resizers, form photos and text
+India exam photos and signatures, Hindi and text tools, exam pages
+About 8 to 10 weeks
+Exam pages verified against official notices; traffic seen from India
+P4. More departments
+PDF, creator tools, data and developer, calculators
+Ongoing, one department at a time
+Each department only after the earlier ones are stable
+P5. AI tools and paid plan
+Paid credits, accounts, moderation, Plus
+Only when a revenue case exists
+Proven traffic base and a costed, moderated service
+Cross-cutting work (runs through every phase)
+Launch of the domain and brand pages before public launch of P1 (buy the domain, handles, trademark search).
+Ads and the Plus plan are evaluated once traffic is steady.
+Hindi site after English pages are established.
+Refresh of the competitive analysis every quarter.
+Order inside P1 (summary; the full plan is in the Phase 1 guide)
+Project foundations, registry and page template
+Image engine and the image converters
+Audio engine on FFmpeg and the audio converters
+Video converters, with the engine hosted and cached properly
+Content, SEO and trust pages
+Testing on real devices, then soft launch
+Success measures
+Stage
+Measure
+Meaning
+Launch
+Wave 1 pages indexed within 6 weeks
+Search engines accept the pages
+Early traction
+Steady growth in weekly impressions and clicks
+Rankings are building
+Product quality
+Conversion completion rate and error rate by tool
+The tools work for real people
+Trust
+Return visits and direct visits
+People remember the brand
+Business
+First ad or Plus revenue
+Only after traffic is stable
+No numeric traffic or revenue targets are set yet. They will be set after the first three months of real data, because guesses made now would not be reliable.
+Rules for changing the roadmap
+A phase can be shortened or reordered if search data shows a stronger opportunity, but the converters are not skipped.
+A new department is added only with a registry record and a content plan.
+Anything that threatens the privacy promise is rejected, whatever it offers.
+17. Risks and Mitigations
+Each risk lists how to avoid it and what to do if it happens anyway. Severity is the combined effect of likelihood and impact, as a judgement and not a measurement.
+#
+Risk
+Severity
+How to avoid it
+If it happens
+1
+Founder time runs out (part-time, other projects such as AurenzaX)
+High
+Keep Phase 1 small; ship the first wave before adding anything; build on one shared template and registry so each tool is cheap; set a weekly hour budget
+Cut scope to the highest-demand pages, pause lower phases, and ship what exists
+2
+Domain squatting or name conflict (the domain is not bought yet; a similar brand exists)
+Medium
+Buy the domain before public launch; run exact-match Google, social handle and India trademark searches now; keep a backup name
+Move to the backup name early, before pages rank, since URLs are cheap to change at the start
+3
+Free hosting limits (file size, bandwidth, build limits)
+High
+Host the large engine file on a separate free object store; keep the page code static; check current limits before relying on them (verify in the implementation guide)
+Move to a paid plan or another host; static output makes this simple
+4
+Browser memory and speed limits (large videos crash phones and low-end laptops)
+High
+Set per-tool size limits by device; warn before work starts; process in a worker; offer "fast mode" that remuxes without re-encoding; show clear progress and a cancel button
+Show a plain-language failure message with a suggestion (smaller file, different format) and log the failure class without file contents
+5
+Browser quirks (iOS and Safari differences, HEIC handling, canvas limits, WebP encoding)
+High
+Test on real iOS and Android devices from the first week; keep a compatibility matrix; feature-detect and fall back
+Route the affected case to a different engine or disable that option on that browser with a clear note
+6
+Engine delivery issues (FFmpeg engine size, SharedArrayBuffer requirements, cross-origin isolation conflicts with ad scripts)
+High
+Use the single-thread engine by default; treat the multi-thread engine as an optional upgrade; keep isolation headers off pages that will carry ads; cache the engine aggressively
+Serve the single-thread engine everywhere and ship the multi-thread engine only where it works
+7
+Codec licensing and patents (H.264, HEVC, AAC; GPL components)
+Medium
+Review each library's licence before use; prefer permissively licensed builds; avoid distributing GPL code in ways that force disclosure without a plan; note that this is not legal advice and a lawyer should review before monetising
+Swap the codec or remove the affected conversion; get legal advice
+8
+Thin or duplicate content penalties
+High
+Follow the page bar in section 15; launch in waves; keep unfinished pages out of the sitemap
+Merge or redirect weak pages, rewrite, and wait for recrawl
+9
+Slow ranking on a new site
+High
+Start with narrow phrases; build useful guides and the trust page; do not expect early revenue
+Keep publishing quality pages; reassess keyword choices from Search Console data
+10
+Large competitors react (CloudConvert, FreeConvert, Convertio and others move to client-side or cut prices)
+Medium
+Compete on speed, privacy proof and clarity; keep adding departments they do not serve (India forms)
+Differentiate further on India-specific tools and trust
+11
+Ad network rejection or low ad income
+Medium
+Launch ad-free; add original content and trust pages first; apply when traffic and content are strong; do not rely on ad revenue in planning
+Rely on Plus and partnerships; try another network
+12
+Privacy claim proved wrong (a bug uploads data, an analytics tool captures filenames)
+High
+Test the no-upload claim in CI (network-request check); keep analytics free of file data; review third-party scripts
+Fix immediately, tell users plainly and update the privacy page
+13
+Legal and compliance (privacy law, cookie consent, terms, abuse of tools)
+Medium
+Publish clear privacy, terms and cookie pages; collect minimum data; get a professional review before ads or accounts
+Take the page down, correct and republish; seek advice
+14
+Exam rules go out of date (wrong sizes cause rejected forms)
+High
+Verify against the official notice; show last-checked dates; link to the official source; keep the list small at first
+Update at once and note the correction on the page
+15
+Quality complaints (output looks worse than the original, wrong colours, audio glitches)
+Medium
+Set tested default settings; keep a sample-file regression suite; show output size and quality before download
+Fix the default, add a quality option, and re-test the sample set
+16
+Abuse and bad content (people use the tools for infringing or harmful content)
+Low
+Files never reach the servers, so the site cannot host or distribute content; keep the downloader category permanently out of scope
+Respond to complaints promptly through a contact page
+17
+Security (supply-chain compromise of a dependency or the engine file)
+Medium
+Pin versions; verify hashes of the engine files; run automated dependency checks; use a strict content security policy
+Roll back to a pinned version; rotate tokens and publish a notice
+18
+Scope creep and the "all tools" trap
+High
+Follow the phase gates; every new tool needs a registry record and a content plan
+Remove or defer additions that did not pass the gate
+19
+Cost surprises (domain renewals, storage and bandwidth overage, AI costs)
+Low
+Track costs monthly; keep AI out of the free tier; use free tiers with alerts
+Throttle, move storage or pause the costly feature
+20
+Search engine algorithm change
+Medium
+Do not depend on one traffic source; build direct and returning visitors; keep content useful
+Diagnose from Search Console, improve affected pages, diversify channels
+How the risk list is used
+It is reviewed at the end of each phase and every quarter.
+A new risk is added whenever something unexpected breaks.
+Any risk rated High that has no working mitigation blocks the next phase gate.
