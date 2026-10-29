@@ -28,7 +28,7 @@ Hurrykit is a client-side file conversion suite designed for maximum privacy, sp
 
 ### Prerequisites
 
-- **Node.js:** `>= 20.0.0`
+- **Node.js:** `>= 22.13.0`
 - **Package Manager:** `pnpm` (v11+ recommended)
 
 ### Installation

@@ -11,6 +11,7 @@
  */
 
 import * as React from "react"
+import Link from "next/link"
 import { useTheme as useNextTheme } from "next-themes"
 
 /* ────────────────────────────────────────────────────────────────────
@@ -1670,15 +1671,16 @@ export default function SculptureHero(props: SculptureHeroProps) {
         </div>
       ) : null}
       <div ref={stageRef} className="sh-stage" aria-hidden="true">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img ref={imgRef} className="sh-fallback" src={activeSrc} alt="" crossOrigin="anonymous" draggable={false} />
       </div>
       <span style={{ position: "absolute", width: 1, height: 1, overflow: "hidden", clip: "rect(0 0 0 0)" }}>{imageAlt}</span>
 
       {showNav && (
         <nav ref={navRef} className="sh-nav" aria-label="Primary">
-          <a className="sh-brand" href="/">
+          <Link className="sh-brand" href="/">
             {brand}
-          </a>
+          </Link>
           <ul className="sh-links">
             {navLinks.map((l, i) => (
               <li key={i}>
@@ -1747,7 +1749,7 @@ export default function SculptureHero(props: SculptureHeroProps) {
       </div>
 
       {showCredit && (
-        <a className="sh-credit" href="https://guglielmogiannattasio.it" target="_blank" rel="noopener">
+        <a className="sh-credit" href="https://guglielmogiannattasio.it" target="_blank" rel="noopener noreferrer">
           by guglielmogiannattasio.it
         </a>
       )}

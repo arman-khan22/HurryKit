@@ -48,7 +48,7 @@ In the [Cloudflare Dashboard](https://dash.cloudflare.com/) > **Compute (Workers
 | **Build command** | `pnpm run build` | Runs full Next.js export producing `out/` |
 | **Build output directory** | `out` | Next.js static HTML export folder |
 | **Root directory** | `/` (root of repository) | Single project repository root |
-| **Node.js Version** | `20.18.0` | Matches GitHub Actions runtime |
+| **Node.js Version** | `22.14.0` (or `>=22.13.0`) | Matches GitHub Actions runtime and pnpm v11 requirements |
 | **Package Manager** | `pnpm@11.24.0` | Specified in package.json |
 
 ### Build Environment Variables in Cloudflare Pages Dashboard
@@ -56,7 +56,7 @@ In the [Cloudflare Dashboard](https://dash.cloudflare.com/) > **Compute (Workers
 Set these under **Settings > Environment variables** (available for Production and Preview):
 
 ```ini
-NODE_VERSION=20.18.0
+NODE_VERSION=22.14.0
 PNPM_VERSION=11.24.0
 NEXT_PUBLIC_SITE_URL=https://example.com
 NEXT_PUBLIC_ENV=production
