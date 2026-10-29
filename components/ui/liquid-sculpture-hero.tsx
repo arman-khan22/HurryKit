@@ -1677,43 +1677,45 @@ export default function SculptureHero(props: SculptureHeroProps) {
       <span style={{ position: "absolute", width: 1, height: 1, overflow: "hidden", clip: "rect(0 0 0 0)" }}>{imageAlt}</span>
 
       {showNav && (
-        <nav ref={navRef} className="sh-nav" aria-label="Primary">
+        <header ref={navRef} className="sh-nav" role="banner">
           <Link className="sh-brand" href="/">
             {brand}
           </Link>
-          <ul className="sh-links">
-            {navLinks.map((l, i) => (
-              <li key={i}>
-                <a className="sh-link" href={l.href}>
-                  {l.label}
-                </a>
-              </li>
-            ))}
-            {themeToggle && (
-              <li className="sh-keep">
-                <button
-                  type="button"
-                  className="sh-theme"
-                  aria-label={mode === "dark" ? "Switch to light theme" : "Switch to dark theme"}
-                  onClick={() => {
-                    const nextMode = mode === "dark" ? "light" : "dark"
-                    setMode(nextMode)
-                    setTheme?.(nextMode)
-                  }}
-                >
-                  {mode === "dark" ? <SunIcon /> : <MoonIcon />}
-                </button>
-              </li>
-            )}
-            {navCta && navCta.label && (
-              <li className="sh-keep">
-                <a className="sh-navcta" href={navCta.href}>
-                  {navCta.label}
-                </a>
-              </li>
-            )}
-          </ul>
-        </nav>
+          <nav aria-label="Primary" style={{ display: "contents" }}>
+            <ul className="sh-links">
+              {navLinks.map((l, i) => (
+                <li key={i}>
+                  <a className="sh-link" href={l.href}>
+                    {l.label}
+                  </a>
+                </li>
+              ))}
+              {themeToggle && (
+                <li className="sh-keep">
+                  <button
+                    type="button"
+                    className="sh-theme"
+                    aria-label={mode === "dark" ? "Switch to light theme" : "Switch to dark theme"}
+                    onClick={() => {
+                      const nextMode = mode === "dark" ? "light" : "dark"
+                      setMode(nextMode)
+                      setTheme?.(nextMode)
+                    }}
+                  >
+                    {mode === "dark" ? <SunIcon /> : <MoonIcon />}
+                  </button>
+                </li>
+              )}
+              {navCta && navCta.label && (
+                <li className="sh-keep">
+                  <a className="sh-navcta" href={navCta.href}>
+                    {navCta.label}
+                  </a>
+                </li>
+              )}
+            </ul>
+          </nav>
+        </header>
       )}
 
       {interactive && hintText ? (
