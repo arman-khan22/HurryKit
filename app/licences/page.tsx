@@ -1,13 +1,13 @@
 import type { Metadata } from 'next';
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs';
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://hurrykit.com';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? '';
 
 export const metadata: Metadata = {
   title: 'Open Source Licences & Notices | Hurrykit',
   description:
     'Attributions, copyright notices, and open source licenses for the libraries and WebAssembly codecs that power Hurrykit.',
-  alternates: { canonical: `${SITE_URL}/licences` },
+  alternates: { canonical: SITE_URL ? `${SITE_URL}/licences` : '/licences' },
 };
 
 type LicenceItem = {
@@ -96,8 +96,8 @@ const LICENCES: LicenceItem[] = [
 
 export default function LicencesPage() {
   const breadcrumbs = [
-    { name: 'Home', item: SITE_URL },
-    { name: 'Licences', item: `${SITE_URL}/licences` },
+    { name: 'Home', item: SITE_URL || '/' },
+    { name: 'Licences', item: SITE_URL ? `${SITE_URL}/licences` : '/licences' },
   ];
 
   return (

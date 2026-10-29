@@ -10,7 +10,7 @@ import { Breadcrumbs } from '@/components/seo/Breadcrumbs';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { Prose } from '@/components/content/Prose';
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://hurrykit.com';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? '';
 
 export const dynamicParams = false;
 
@@ -29,7 +29,7 @@ export async function generateMetadata({
 
   const title = `${format.name} Format — Features, Compatibility & Converters | Hurrykit`;
   const description = `Technical specifications for ${format.name} (${format.extensions.join(', ')}). Convert ${format.name} files 100% locally in your browser with zero upload.`;
-  const canonical = `${SITE_URL}/formats/${format.id}`;
+  const canonical = SITE_URL ? `${SITE_URL}/formats/${format.id}` : `/formats/${format.id}`;
 
   return {
     title,
@@ -67,9 +67,9 @@ export default async function FormatPage({
   }
 
   const breadcrumbs = [
-    { name: 'Home', item: SITE_URL },
-    { name: 'Formats', item: `${SITE_URL}/formats/${format.id}` },
-    { name: format.name, item: `${SITE_URL}/formats/${format.id}` },
+    { name: 'Home', item: SITE_URL || '/' },
+    { name: 'Formats', item: SITE_URL ? `${SITE_URL}/formats/${format.id}` : `/formats/${format.id}` },
+    { name: format.name, item: SITE_URL ? `${SITE_URL}/formats/${format.id}` : `/formats/${format.id}` },
   ];
 
   const ldData = {
@@ -77,7 +77,7 @@ export default async function FormatPage({
     '@type': 'TechArticle',
     headline: `${format.name} Format Overview and Converters`,
     description: format.notes ?? `Everything about the ${format.name} file format.`,
-    url: `${SITE_URL}/formats/${format.id}`,
+    url: SITE_URL ? `${SITE_URL}/formats/${format.id}` : `/formats/${format.id}`,
   };
 
   const kindColors: Record<string, string> = {

@@ -9,7 +9,8 @@ export const FFMPEG_CORE_VERSION =
   process.env.NEXT_PUBLIC_FFMPEG_VERSION ?? '0.12.10';
 
 export const FFMPEG_PRIMARY_BASE_URL =
-  process.env.NEXT_PUBLIC_FFMPEG_BASE_URL ?? 'https://cdn.hurrykit.com/ffmpeg';
+  process.env.NEXT_PUBLIC_FFMPEG_BASE_URL ??
+  `https://unpkg.com/@ffmpeg/core@${FFMPEG_CORE_VERSION}/dist/esm`;
 
 export const FFMPEG_MIRROR_URLS = [
   `https://unpkg.com/@ffmpeg/core@${FFMPEG_CORE_VERSION}/dist/esm`,

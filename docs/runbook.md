@@ -6,8 +6,8 @@ This runbook defines operational workflows, incident response procedures, diagno
 
 ## 1. Quick Reference & System Topology
 
-- **Production Domain**: `https://hurrykit.com`
-- **Binary CDN Domain**: `https://cdn.hurrykit.com`
+- **Production Domain**: `https://example.com`
+- **Binary CDN Domain**: `https://cdn.example.com`
 - **Hosting Platform**: Cloudflare Pages (Static Edge Export)
 - **Binary Storage**: Cloudflare R2 (`hurrykit-cdn`)
 - **Monitoring & Error Logging**: Cloudflare Pages Function (`/api/error-log`)
@@ -22,23 +22,23 @@ This runbook defines operational workflows, incident response procedures, diagno
 - **Error Codes**: `ENGINE_LOAD_FAILED`, `ERR_NETWORK_OFFLINE`, `ERR_FETCH_TIMEOUT`
 - **Symptoms**:
   - User opens video/audio converter and conversion hangs at *"Loading converter..."* or displays *"Failed to load conversion engine"*.
-  - Browser console logs: `Failed to fetch https://cdn.hurrykit.com/ffmpeg/0.12.10/ffmpeg-core.wasm` or CORS error.
+  - Browser console logs: `Failed to fetch https://cdn.example.com/ffmpeg/0.12.10/ffmpeg-core.wasm` or CORS error.
 - **Automated Fallback**:
   - Hurrykit's `assets.ts` loader automatically cascades:
-    1. Primary: `https://cdn.hurrykit.com/ffmpeg/0.12.10/`
+    1. Primary: `https://cdn.example.com/ffmpeg/0.12.10/`
     2. Fallback Mirror 1: `https://unpkg.com/@ffmpeg/core@0.12.10/dist/esm/`
     3. Fallback Mirror 2: `https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.10/dist/esm/`
 - **Diagnostics**:
   ```bash
   # Check if primary CDN is serving binary with CORS headers
-  curl -I -H "Origin: https://hurrykit.com" https://cdn.hurrykit.com/ffmpeg/0.12.10/ffmpeg-core.wasm
+  curl -I -H "Origin: https://example.com" https://cdn.example.com/ffmpeg/0.12.10/ffmpeg-core.wasm
   ```
   Expected headers:
   - `HTTP/2 200`
   - `access-control-allow-origin: *`
   - `content-type: application/wasm`
 - **Remediation**:
-  1. If `cdn.hurrykit.com` returns 404 or 403: Verify Cloudflare R2 bucket `hurrykit-cdn` status and CORS policy (`docs/deployment.md`).
+  1. If `cdn.example.com` returns 404 or 403: Verify Cloudflare R2 bucket `hurrykit-cdn` status and CORS policy (`docs/deployment.md`).
   2. If custom domain SSL is degraded: Update `NEXT_PUBLIC_FFMPEG_BASE_URL` in Cloudflare Pages environment variables to `https://unpkg.com/@ffmpeg/core` and trigger an instant deployment.
   3. If user is offline without cached engine: User will see the offline banner. Ask user to reconnect once to seed cache.
 
@@ -96,8 +96,8 @@ This runbook defines operational workflows, incident response procedures, diagno
   1. **Stop Deployments**: Immediately freeze pipeline and halt active releases.
   2. **Audit Network Requests**:
      - The ONLY permitted outbound requests are:
-       - Static asset downloads (`hurrykit.com/_next/*`)
-       - WASM engine downloads from R2/mirrors (`cdn.hurrykit.com/ffmpeg/*`)
+       - Static asset downloads (`example.com/_next/*`)
+       - WASM engine downloads from R2/mirrors (`cdn.example.com/ffmpeg/*`)
        - Anonymized error logging (`/api/error-log`) with payload < 2 KB containing ONLY: `{ errorClass, toolId, browser, version, deviceClass }`.
   3. **Inspect Dependency Updates**:
      - Check git diff for any newly added npm packages or script tags.
@@ -152,8 +152,8 @@ pnpm run test:e2e
 ### CDN Binary Health Check
 ```bash
 # Verify JS loader
-curl -sI https://cdn.hurrykit.com/ffmpeg/0.12.10/ffmpeg-core.js | grep -E "HTTP|content-type|access-control"
+curl -sI https://cdn.example.com/ffmpeg/0.12.10/ffmpeg-core.js | grep -E "HTTP|content-type|access-control"
 
 # Verify WASM binary
-curl -sI https://cdn.hurrykit.com/ffmpeg/0.12.10/ffmpeg-core.wasm | grep -E "HTTP|content-type|access-control"
+curl -sI https://cdn.example.com/ffmpeg/0.12.10/ffmpeg-core.wasm | grep -E "HTTP|content-type|access-control"
 ```

@@ -5,7 +5,7 @@ import type { Department } from '@/registry';
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs';
 import { JsonLd } from '@/components/seo/JsonLd';
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://hurrykit.com';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? '';
 
 const DEPT_ACCENT: Record<Department, string> = {
   image: 'var(--image)',
@@ -15,7 +15,7 @@ const DEPT_ACCENT: Record<Department, string> = {
 
 export function getHubMetadata(dept: Department): Metadata {
   const hub = HUBS[dept];
-  const canonical = `${SITE_URL}/${hub.slug}`;
+  const canonical = SITE_URL ? `${SITE_URL}/${hub.slug}` : `/${hub.slug}`;
   return {
     title: `${hub.name} — Free, No Upload | Hurrykit`,
     description: hub.description,
@@ -35,8 +35,8 @@ export function HubView({ dept }: { dept: Department }) {
   const accent = DEPT_ACCENT[dept];
 
   const breadcrumbs = [
-    { name: 'Home', item: SITE_URL },
-    { name: hub.name, item: `${SITE_URL}/${hub.slug}` },
+    { name: 'Home', item: SITE_URL || '/' },
+    { name: hub.name, item: SITE_URL ? `${SITE_URL}/${hub.slug}` : `/${hub.slug}` },
   ];
 
   const collectionLd = {
@@ -44,12 +44,12 @@ export function HubView({ dept }: { dept: Department }) {
     '@type': 'ItemList',
     name: hub.name,
     description: hub.description,
-    url: `${SITE_URL}/${hub.slug}`,
+    url: SITE_URL ? `${SITE_URL}/${hub.slug}` : `/${hub.slug}`,
     numberOfItems: tools.length,
     itemListElement: tools.map((t, i) => ({
       '@type': 'ListItem',
       position: i + 1,
-      url: `${SITE_URL}/${t.slug}`,
+      url: SITE_URL ? `${SITE_URL}/${t.slug}` : `/${t.slug}`,
       name: t.seo.title,
     })),
   };

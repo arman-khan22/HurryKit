@@ -2,19 +2,19 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs';
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://hurrykit.com';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? '';
 
 export const metadata: Metadata = {
   title: 'Privacy Policy | Hurrykit',
   description:
     'Hurrykit Privacy Policy. Understand our zero-upload architecture, minimal privacy-first analytics, and strict data protection practices.',
-  alternates: { canonical: `${SITE_URL}/privacy` },
+  alternates: { canonical: SITE_URL ? `${SITE_URL}/privacy` : '/privacy' },
 };
 
 export default function PrivacyPage() {
   const breadcrumbs = [
-    { name: 'Home', item: SITE_URL },
-    { name: 'Privacy Policy', item: `${SITE_URL}/privacy` },
+    { name: 'Home', item: SITE_URL || '/' },
+    { name: 'Privacy Policy', item: SITE_URL ? `${SITE_URL}/privacy` : '/privacy' },
   ];
 
   return (
@@ -68,7 +68,7 @@ export default function PrivacyPage() {
 
         <h2 className="text-2xl font-bold text-[var(--text)] mt-8 mb-3">6. Contact</h2>
         <p className="text-[var(--muted)] leading-relaxed">
-          If you have questions or concerns about this privacy policy, please contact us at <a href="mailto:privacy@hurrykit.com" className="text-[var(--image)] underline">privacy@hurrykit.com</a>.
+          If you have questions or concerns about this privacy policy, please contact us at <a href="mailto:privacy@hurrykit.org" className="text-[var(--image)] underline">privacy@hurrykit.org</a>.
         </p>
       </article>
     </div>

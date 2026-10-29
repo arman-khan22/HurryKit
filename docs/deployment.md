@@ -14,7 +14,7 @@ Hurrykit runs entirely on Cloudflare's serverless edge infrastructure to provide
                 ┌──────────────────────┴──────────────────────┐
                 │                                             │
       Static HTML / JS / CSS                      WASM Engine Binaries
-       (hurrykit.com - Pages)                     (cdn.hurrykit.com - R2)
+       (example.com - Pages)                     (cdn.example.com - R2)
                 │                                             │
                 ▼                                             ▼
   ┌───────────────────────────┐                 ┌───────────────────────────┐
@@ -31,7 +31,7 @@ Hurrykit runs entirely on Cloudflare's serverless edge infrastructure to provide
    - Cloudflare Pages Functions handles serverless endpoints (e.g. `functions/api/error-log.ts` for strictly anonymized error monitoring).
 2. **Heavy Codec Storage (Cloudflare R2)**:
    - FFmpeg.wasm uncompressed binary is ~31 MB (exceeds Cloudflare Pages 25 MiB single-file limit).
-   - Hosted on Cloudflare R2 behind custom domain `cdn.hurrykit.com`.
+   - Hosted on Cloudflare R2 behind custom domain `cdn.example.com`.
    - Served with gzip/brotli compression (~14.5 MB on wire) and cached permanently (`max-age=31536000, immutable`).
 
 ---
@@ -58,9 +58,9 @@ Set these under **Settings > Environment variables** (available for Production a
 ```ini
 NODE_VERSION=20.18.0
 PNPM_VERSION=11.24.0
-NEXT_PUBLIC_SITE_URL=https://hurrykit.com
+NEXT_PUBLIC_SITE_URL=https://example.com
 NEXT_PUBLIC_ENV=production
-NEXT_PUBLIC_FFMPEG_BASE_URL=https://cdn.hurrykit.com/ffmpeg
+NEXT_PUBLIC_FFMPEG_BASE_URL=https://cdn.example.com/ffmpeg
 NEXT_PUBLIC_FFMPEG_VERSION=0.12.10
 NEXT_PUBLIC_ANALYTICS_ID=
 ```
@@ -83,8 +83,8 @@ Create a configuration file `cors.json`:
 [
   {
     "AllowedOrigins": [
-      "https://hurrykit.com",
-      "https://*.hurrykit.com",
+      "https://example.com",
+      "https://*.example.com",
       "https://*.pages.dev",
       "http://localhost:3000"
     ],
@@ -121,7 +121,7 @@ npx wrangler r2 object put hurrykit-cdn/ffmpeg/0.12.10/ffmpeg-core.wasm \
 ### 3.4. Connect Custom Domain
 
 1. In the Cloudflare Dashboard, navigate to **R2 > hurrykit-cdn > Settings > Custom Domains**.
-2. Click **Connect Domain** and enter `cdn.hurrykit.com`.
+2. Click **Connect Domain** and enter `cdn.example.com`.
 3. Cloudflare will automatically configure DNS records and SSL/TLS certificates.
 
 ---
@@ -130,10 +130,10 @@ npx wrangler r2 object put hurrykit-cdn/ffmpeg/0.12.10/ffmpeg-core.wasm \
 
 | Variable Name | Context | Type | Default | Description |
 | :--- | :--- | :--- | :--- | :--- |
-| `NEXT_PUBLIC_SITE_URL` | Client + Build | URL | `https://hurrykit.com` | Canonical site origin used for meta tags, OpenGraph, Twitter cards, and sitemap generation. |
-| `SITE_URL` | Server / Script | URL | `https://hurrykit.com` | Node.js script runtime canonical origin. |
+| `NEXT_PUBLIC_SITE_URL` | Client + Build | URL | `https://example.com` | Canonical site origin used for meta tags, OpenGraph, Twitter cards, and sitemap generation. |
+| `SITE_URL` | Server / Script | URL | `https://example.com` | Node.js script runtime canonical origin. |
 | `NEXT_PUBLIC_ENV` | Client + Build | String | `development` | Deployment environment: `development`, `preview`, or `production`. |
-| `NEXT_PUBLIC_FFMPEG_BASE_URL` | Client | URL | `https://cdn.hurrykit.com/ffmpeg` | Base CDN URL where FFmpeg.wasm assets are hosted. |
+| `NEXT_PUBLIC_FFMPEG_BASE_URL` | Client | URL | `https://cdn.example.com/ffmpeg` | Base CDN URL where FFmpeg.wasm assets are hosted. |
 | `NEXT_PUBLIC_FFMPEG_VERSION` | Client | String | `0.12.10` | Specific version path segment for cached WASM assets. |
 | `NEXT_PUBLIC_ANALYTICS_ID` | Client | String | `""` | Optional privacy-friendly analytics identifier (Cloudflare Web Analytics token or Plausible domain). |
 | `CLOUDFLARE_API_TOKEN` | CI/CD Secret | Secret | N/A | Cloudflare API token with `Cloudflare Pages: Edit` permissions. |
@@ -151,7 +151,7 @@ Cloudflare Pages automatically processes the `public/_headers` file and applies 
   X-Frame-Options: DENY
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(self), microphone=(), geolocation=(), payment=()
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' blob:; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self' https://cdn.hurrykit.com https://unpkg.com https://cdn.jsdelivr.net blob: data:; frame-ancestors 'none'; base-uri 'self'; form-action 'self';
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' blob:; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self' https://cdn.example.com https://unpkg.com https://cdn.jsdelivr.net blob: data:; frame-ancestors 'none'; base-uri 'self'; form-action 'self';
   Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
 
 /_next/static/*
@@ -171,7 +171,7 @@ Cloudflare Pages automatically processes the `public/_headers` file and applies 
    - `default-src 'self'`: Restricts standard resources to the same origin.
    - `script-src 'self' 'unsafe-eval' 'unsafe-inline' blob:`: Permits Next.js scripts and WebAssembly runtime execution (`unsafe-eval` is required by Emscripten-compiled WebAssembly in older runtimes; `blob:` is required for inline Web Worker instantiations).
    - `worker-src 'self' blob:`: Allows instantiation of dedicated background workers via Object URLs.
-   - `connect-src 'self' https://cdn.hurrykit.com https://unpkg.com https://cdn.jsdelivr.net blob: data:`: Strictly whitelists the application API, R2 CDN, and documented fallback mirrors. **No user file bytes or uncontrolled external endpoints can be contacted.**
+   - `connect-src 'self' https://cdn.example.com https://unpkg.com https://cdn.jsdelivr.net blob: data:`: Strictly whitelists the application API, R2 CDN, and documented fallback mirrors. **No user file bytes or uncontrolled external endpoints can be contacted.**
    - `frame-ancestors 'none'`: Prevents clickjacking by forbidding embedding inside third-party iframes.
 2. **`Permissions-Policy: camera=(self), microphone=(), geolocation=(), payment=()`**:
    - Allows users to photograph receipts/documents directly into the DropZone via device camera while disabling microphone, geolocation, and payment APIs.
@@ -188,5 +188,5 @@ Cloudflare Pages automatically processes the `public/_headers` file and applies 
 - [x] Run `pnpm test` — 207 unit/integration tests passing.
 - [x] Run `pnpm run seo-check` — 0 missing meta tags, canonicals, or structured data errors.
 - [x] Run `pnpm run test:e2e` — 38 Playwright E2E tests passing.
-- [x] Verify `_headers` deployed and verified with `curl -I https://hurrykit.com`.
-- [x] Verify `cdn.hurrykit.com` returns `200 OK` with `Content-Type: application/wasm` and `Access-Control-Allow-Origin: *`.
+- [x] Verify `_headers` deployed and verified with `curl -I https://example.com`.
+- [x] Verify `cdn.example.com` returns `200 OK` with `Content-Type: application/wasm` and `Access-Control-Allow-Origin: *`.

@@ -2,19 +2,19 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs';
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://hurrykit.com';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? '';
 
 export const metadata: Metadata = {
   title: 'Our Privacy Promise — Zero Upload, 100% In-Browser | Hurrykit',
   description:
     'How Hurrykit guarantees your privacy: your files never leave your device. Zero upload, no accounts, no tracking. Learn how to verify it yourself.',
-  alternates: { canonical: `${SITE_URL}/privacy-promise` },
+  alternates: { canonical: SITE_URL ? `${SITE_URL}/privacy-promise` : '/privacy-promise' },
 };
 
 export default function PrivacyPromisePage() {
   const breadcrumbs = [
-    { name: 'Home', item: SITE_URL },
-    { name: 'Privacy Promise', item: `${SITE_URL}/privacy-promise` },
+    { name: 'Home', item: SITE_URL || '/' },
+    { name: 'Privacy Promise', item: SITE_URL ? `${SITE_URL}/privacy-promise` : '/privacy-promise' },
   ];
 
   return (

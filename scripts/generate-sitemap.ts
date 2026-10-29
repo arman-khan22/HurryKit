@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { liveTools, allFormats, HUBS } from '../registry';
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://hurrykit.com';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? '';
 const outPath = path.join(process.cwd(), 'public', 'sitemap.xml');
 
 console.log('--- Generating Standalone sitemap.xml ---');
@@ -11,7 +11,7 @@ const urls: { loc: string; lastmod: string; changefreq: string; priority: string
 const today = new Date().toISOString().split('T')[0]!;
 
 // Home
-urls.push({ loc: SITE_URL, lastmod: today, changefreq: 'daily', priority: '1.0' });
+urls.push({ loc: SITE_URL || '/', lastmod: today, changefreq: 'daily', priority: '1.0' });
 
 // Hubs
 for (const hub of Object.values(HUBS)) {

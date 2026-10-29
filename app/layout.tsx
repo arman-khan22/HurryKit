@@ -6,10 +6,10 @@ import { ThemeProvider } from '@/components/layout/ThemeProvider';
 import { Analytics } from '@/components/layout/Analytics';
 import { JsonLd, createWebSiteLd } from '@/components/seo/JsonLd';
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://hurrykit.com';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL;
 
 export const metadata: Metadata = {
-  metadataBase: new URL(SITE_URL),
+  metadataBase: SITE_URL ? new URL(SITE_URL) : undefined,
   title: {
     default: 'Hurrykit — Free File Converter, No Upload',
     template: '%s | Hurrykit',
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: SITE_URL,
+    url: SITE_URL || '/',
     siteName: 'Hurrykit',
     title: 'Hurrykit — Free File Converter, No Upload',
     description:

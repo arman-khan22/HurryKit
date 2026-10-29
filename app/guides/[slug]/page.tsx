@@ -8,7 +8,7 @@ import { marked } from 'marked';
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs';
 import { JsonLd } from '@/components/seo/JsonLd';
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://hurrykit.com';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? '';
 const GUIDES_DIR = path.join(process.cwd(), 'content', 'guides');
 
 export const dynamicParams = false;
@@ -43,7 +43,7 @@ export async function generateMetadata({
   const guide = await loadGuide(slug);
   if (!guide) return {};
 
-  const canonical = `${SITE_URL}/guides/${slug}`;
+  const canonical = SITE_URL ? `${SITE_URL}/guides/${slug}` : `/guides/${slug}`;
   return {
     title: `${guide.data.title} | Hurrykit Guides`,
     description: guide.data.description,
@@ -127,9 +127,9 @@ export default async function GuidePage({
   if (!guide) notFound();
 
   const breadcrumbs = [
-    { name: 'Home', item: SITE_URL },
-    { name: 'Guides', item: `${SITE_URL}/guides/${slug}` },
-    { name: guide.data.title, item: `${SITE_URL}/guides/${slug}` },
+    { name: 'Home', item: SITE_URL || '/' },
+    { name: 'Guides', item: SITE_URL ? `${SITE_URL}/guides/${slug}` : `/guides/${slug}` },
+    { name: guide.data.title, item: SITE_URL ? `${SITE_URL}/guides/${slug}` : `/guides/${slug}` },
   ];
 
   const ldData = {
@@ -138,7 +138,7 @@ export default async function GuidePage({
     headline: guide.data.title,
     description: guide.data.description,
     datePublished: guide.data.date,
-    url: `${SITE_URL}/guides/${slug}`,
+    url: SITE_URL ? `${SITE_URL}/guides/${slug}` : `/guides/${slug}`,
   };
 
   return (

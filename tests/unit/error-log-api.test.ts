@@ -11,7 +11,7 @@ describe('Error Logging API Endpoint (lib/errorLogHandler.ts)', () => {
       deviceClass: 'mid',
     };
 
-    const req = new Request('https://hurrykit.com/api/error-log', {
+    const req = new Request('http://localhost/api/error-log', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
@@ -33,7 +33,7 @@ describe('Error Logging API Endpoint (lib/errorLogHandler.ts)', () => {
       fileName: 'secret_recording.mp4', // Disallowed field!
     };
 
-    const req = new Request('https://hurrykit.com/api/error-log', {
+    const req = new Request('http://localhost/api/error-log', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(leakedPayload),
@@ -55,7 +55,7 @@ describe('Error Logging API Endpoint (lib/errorLogHandler.ts)', () => {
       content: 'raw-image-bytes-base64...', // Disallowed field!
     };
 
-    const req = new Request('https://hurrykit.com/api/error-log', {
+    const req = new Request('http://localhost/api/error-log', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(leakedContentPayload),
@@ -74,7 +74,7 @@ describe('Error Logging API Endpoint (lib/errorLogHandler.ts)', () => {
       extraPadding: 'x'.repeat(2000),
     };
 
-    const req = new Request('https://hurrykit.com/api/error-log', {
+    const req = new Request('http://localhost/api/error-log', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

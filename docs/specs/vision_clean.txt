@@ -101,7 +101,7 @@ This file is big for a phone. It may be slow, but you can try.
 Error
 That file didn't convert. Here is the likely reason, and what to try next.
 Visual direction. Rich, confident colour with one colour per department (for example Image, Audio, Video each have their own), clean white space, rounded shapes, large readable type and fast, light pages. It must look good and work equally well on a phone and on a desktop, in light and dark mode. The logo direction is a clean wordmark with a small forward-motion mark. It must not copy a heart or any other element from existing tool brands.
-Name status (15 October 2026). The name is locked as the working brand. The domain has deliberately not been bought yet, because the site will first be built and hosted on a free tier. Before any public launch, three checks are still to be done and recorded here: an exact-match Google search, the Instagram and YouTube handles, and an India trademark search. On the day of the domain search, hurrykit.com showed as available at a normal registration price on GoDaddy India; this can change, so the domain should be bought before launch.
+Name status (15 October 2026). The name is locked as the working brand. The domain has deliberately not been bought yet, because the site will first be built and hosted on a free tier. Before any public launch, three checks are still to be done and recorded here: an exact-match Google search, the Instagram and YouTube handles, and an India trademark search. On the day of the domain search, the .com domain showed as available at a normal registration price on GoDaddy India; this can change, so the domain should be bought before launch.
 5. Vision and Mission
 Mission. Make every small file job a thirty-second job: free, private and done on your own device.
 Vision. Hurrykit becomes the first place people go, by name, when they are in a hurry with a file, a photo, a video or a form. It earns that position by being faster, more trustworthy and more complete than the alternatives, not by being louder.
@@ -400,7 +400,7 @@ Free tier
 Static pages on a free host. Limits apply and are covered in the implementation guide.
 Domain
 About ?1,000 to ?1,600 a year
-Seen on GoDaddy India for hurrykit.com on 15 October 2026 (a first-year promotional price, then a higher renewal price).
+Seen on GoDaddy India for the .com domain on 15 October 2026 (a first-year promotional price, then a higher renewal price).
 Engine file storage and delivery
 Free tier
 The large FFmpeg engine file needs its own free storage.

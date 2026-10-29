@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { liveTools, allFormats, HUBS } from '@/registry';
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://hurrykit.com';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? '';
 
 export const dynamic = 'force-static';
 
@@ -11,7 +11,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // Home
   const routes: MetadataRoute.Sitemap = [
     {
-      url: SITE_URL,
+      url: SITE_URL || '/',
       lastModified: now,
       changeFrequency: 'daily',
       priority: 1.0,

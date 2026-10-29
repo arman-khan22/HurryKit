@@ -121,6 +121,11 @@ $RECYCLE.BIN/
 .agents/
 .gemini/
 .gsd/
+.taste-skill/
+.tokens/
+.slides/
+.ai-artist/
+.banner/
 adapters/
 docs/gsd/
 skills-lock.json

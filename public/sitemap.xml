@@ -1,398 +1,398 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://hurrykit.com</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/image-converter</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/image-converter</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/audio-converter</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/audio-converter</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/video-converter</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/video-converter</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/heic-to-jpg</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/heic-to-jpg</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/heic-to-png</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/heic-to-png</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/webp-to-jpg</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/webp-to-jpg</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/webp-to-png</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/webp-to-png</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/jpg-to-png</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/jpg-to-png</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/png-to-jpg</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/png-to-jpg</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/avif-to-jpg</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/avif-to-jpg</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/svg-to-png</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/svg-to-png</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/opus-to-mp3</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/opus-to-mp3</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/m4a-to-mp3</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/m4a-to-mp3</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/wav-to-mp3</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/wav-to-mp3</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/mp3-to-wav</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/mp3-to-wav</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/mp4-to-mp3</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/mp4-to-mp3</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/mov-to-mp4</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/mov-to-mp4</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/mkv-to-mp4</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/mkv-to-mp4</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/avi-to-mp4</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/avi-to-mp4</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/webm-to-mp4</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/webm-to-mp4</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/hevc-to-h264</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/hevc-to-h264</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/mp4-to-gif</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/mp4-to-gif</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/gif-to-mp4</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/gif-to-mp4</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/formats/heic</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/formats/heic</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/formats/jpg</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/formats/jpg</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/formats/png</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/formats/png</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/formats/webp</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/formats/webp</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/formats/avif</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/formats/avif</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/formats/gif</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/formats/gif</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/formats/bmp</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/formats/bmp</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/formats/tiff</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/formats/tiff</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/formats/svg</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/formats/svg</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/formats/ico</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/formats/ico</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/formats/jfif</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/formats/jfif</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/formats/jpeg</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/formats/jpeg</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/formats/mp3</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/formats/mp3</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/formats/wav</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/formats/wav</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/formats/aac</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/formats/aac</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/formats/m4a</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/formats/m4a</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/formats/flac</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/formats/flac</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/formats/ogg</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/formats/ogg</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/formats/opus</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/formats/opus</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/formats/wma</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/formats/wma</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/formats/aiff</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/formats/aiff</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/formats/amr</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/formats/amr</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/formats/mp4</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/formats/mp4</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/formats/mov</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/formats/mov</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/formats/mkv</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/formats/mkv</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/formats/avi</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/formats/avi</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/formats/webm</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/formats/webm</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/formats/wmv</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/formats/wmv</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/formats/flv</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/formats/flv</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/formats/3gp</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/formats/3gp</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/formats/m4v</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/formats/m4v</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/formats/mpeg</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/formats/mpeg</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/guides/how-to-convert-heic-on-windows</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/guides/how-to-convert-heic-on-windows</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/guides/how-to-convert-mov-to-mp4</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/guides/how-to-convert-mov-to-mp4</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/guides/whatsapp-voice-notes-to-mp3</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/guides/whatsapp-voice-notes-to-mp3</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/privacy-promise</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/privacy-promise</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/about</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/about</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/contact</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/contact</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/privacy</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/privacy</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/terms</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/terms</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/cookies</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/cookies</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://hurrykit.com/licences</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>/licences</loc>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>

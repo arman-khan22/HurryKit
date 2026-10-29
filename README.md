@@ -79,11 +79,11 @@ cp .env.example .env.local
 
 | Variable | Description | Default |
 |---|---|---|
-| `SITE_URL` | Canonical site URL (server/build context) | `https://hurrykit.com` |
-| `NEXT_PUBLIC_SITE_URL` | Public site URL available in browser client bundle | `https://hurrykit.com` |
+| `SITE_URL` | Canonical site URL (server/build context) | `""` |
+| `NEXT_PUBLIC_SITE_URL` | Public site URL available in browser client bundle | `""` |
 | `NEXT_PUBLIC_ANALYTICS_ID` | Privacy-friendly analytics ID (optional) | `""` |
 | `NEXT_PUBLIC_ENV` | Environment (`development`, `preview`, `production`) | `development` |
-| `NEXT_PUBLIC_FFMPEG_BASE_URL` | CDN base URL for WebAssembly FFmpeg core | `https://cdn.hurrykit.com/ffmpeg` |
+| `NEXT_PUBLIC_FFMPEG_BASE_URL` | CDN base URL for WebAssembly FFmpeg core | `https://unpkg.com/@ffmpeg/core@0.12.10/dist/esm` |
 | `NEXT_PUBLIC_FFMPEG_VERSION` | Version of FFmpeg core in CDN storage | `0.12.10` |
 
 ---

@@ -159,7 +159,7 @@ All architectural and engineering decisions are recorded here with date, status,
 - **Status:** Adopted
 - **Version:** `@ffmpeg/ffmpeg@0.12.15`, `@ffmpeg/util@0.12.2`, `@ffmpeg/core@0.12.10` (single-thread)
 - **Decision:**
-  1. **External Object Store Hosting**: The 31 MB single-thread `ffmpeg-core.wasm` binary cannot be hosted inside the Cloudflare Pages repository due to Pages' 25 MiB file size limit. It is hosted on Cloudflare R2 behind custom domain `cdn.hurrykit.com` with $0 egress fees and edge caching.
+  1. **External Object Store Hosting**: The 31 MB single-thread `ffmpeg-core.wasm` binary cannot be hosted inside the Cloudflare Pages repository due to Pages' 25 MiB file size limit. It is hosted on Cloudflare R2 behind a custom CDN domain with $0 egress fees and edge caching.
   2. **Strict Lazy Loading**: Never download the core until a user actually starts or preheats an audio/video conversion.
   3. **Two-Tier Client Caching**: Downloaded core binaries are saved into the browser's Cache Storage API (`caches.open('hurrykit-ffmpeg-v0.12.10')`) with durable fallback to IndexedDB, enabling instant 0 ms repeat visits and offline execution.
   4. **CDN Multi-Mirror Resilience**: Automatic runtime fallback to public ESM CDN mirrors (`unpkg.com`, `jsdelivr.net`) if the primary object store is unreachable.

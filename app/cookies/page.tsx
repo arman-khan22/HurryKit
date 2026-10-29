@@ -1,19 +1,19 @@
 import type { Metadata } from 'next';
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs';
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://hurrykit.com';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? '';
 
 export const metadata: Metadata = {
   title: 'Cookie Policy | Hurrykit',
   description:
     'Hurrykit Cookie Policy. We do not use tracking or advertising cookies. Learn how local browser storage is used.',
-  alternates: { canonical: `${SITE_URL}/cookies` },
+  alternates: { canonical: SITE_URL ? `${SITE_URL}/cookies` : '/cookies' },
 };
 
 export default function CookiesPage() {
   const breadcrumbs = [
-    { name: 'Home', item: SITE_URL },
-    { name: 'Cookie Policy', item: `${SITE_URL}/cookies` },
+    { name: 'Home', item: SITE_URL || '/' },
+    { name: 'Cookie Policy', item: SITE_URL ? `${SITE_URL}/cookies` : '/cookies' },
   ];
 
   return (

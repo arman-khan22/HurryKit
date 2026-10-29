@@ -1,19 +1,19 @@
 import type { Metadata } from 'next';
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs';
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://hurrykit.com';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? '';
 
 export const metadata: Metadata = {
   title: 'Contact Us | Hurrykit',
   description:
     'Get in touch with the Hurrykit team. Provide feedback, report bugs, suggest new format conversions, or send legal inquiries.',
-  alternates: { canonical: `${SITE_URL}/contact` },
+  alternates: { canonical: SITE_URL ? `${SITE_URL}/contact` : '/contact' },
 };
 
 export default function ContactPage() {
   const breadcrumbs = [
-    { name: 'Home', item: SITE_URL },
-    { name: 'Contact', item: `${SITE_URL}/contact` },
+    { name: 'Home', item: SITE_URL || '/' },
+    { name: 'Contact', item: SITE_URL ? `${SITE_URL}/contact` : '/contact' },
   ];
 
   return (
@@ -35,10 +35,10 @@ export default function ContactPage() {
               If a file failed to convert on your browser, please include your device model, browser version, and file extension so we can reproduce and fix it.
             </p>
             <a
-              href="mailto:support@hurrykit.com"
+              href="mailto:support@hurrykit.org"
               className="inline-flex items-center gap-2 font-medium text-[var(--image)] hover:underline"
             >
-              support@hurrykit.com →
+              support@hurrykit.org →
             </a>
           </div>
 
@@ -48,10 +48,10 @@ export default function ContactPage() {
               Need a conversion pair that is not currently listed in our registry? Let us know what formats you work with.
             </p>
             <a
-              href="mailto:features@hurrykit.com"
+              href="mailto:features@hurrykit.org"
               className="inline-flex items-center gap-2 font-medium text-[var(--audio)] hover:underline"
             >
-              features@hurrykit.com →
+              features@hurrykit.org →
             </a>
           </div>
 
@@ -61,10 +61,10 @@ export default function ContactPage() {
               For trademark, licensing, or legal correspondence regarding our open-source codec usage and attribution.
             </p>
             <a
-              href="mailto:legal@hurrykit.com"
+              href="mailto:legal@hurrykit.org"
               className="inline-flex items-center gap-2 font-medium text-[var(--video)] hover:underline"
             >
-              legal@hurrykit.com →
+              legal@hurrykit.org →
             </a>
           </div>
         </div>

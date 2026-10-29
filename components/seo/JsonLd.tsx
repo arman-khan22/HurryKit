@@ -1,6 +1,6 @@
 import type { Tool } from '@/registry';
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://hurrykit.com';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? '';
 
 export function JsonLd({ data }: { data: Record<string, unknown> }) {
   return (
@@ -21,7 +21,7 @@ export function createSoftwareApplicationLd(tool: Tool): Record<string, unknown>
     '@type': 'SoftwareApplication',
     name: tool.seo.title,
     description: tool.seo.description,
-    url: `${SITE_URL}/${tool.slug}`,
+    url: SITE_URL ? `${SITE_URL}/${tool.slug}` : `/${tool.slug}`,
     applicationCategory: 'UtilitiesApplication',
     operatingSystem: 'Any (web browser with WebAssembly support)',
     offers: {
@@ -84,24 +84,25 @@ export function FaqJsonLd({ faqs }: { faqs: readonly FaqItemInput[] }) {
  * Creates Schema.org WebSite & Organization JSON-LD object for the root site.
  */
 export function createWebSiteLd(): Record<string, unknown> {
+  const base = SITE_URL || '';
   return {
     '@context': 'https://schema.org',
     '@graph': [
       {
         '@type': 'Organization',
-        '@id': `${SITE_URL}/#organization`,
+        '@id': `${base}/#organization`,
         name: 'Hurrykit',
-        url: SITE_URL,
-        logo: `${SITE_URL}/icon.svg`,
+        url: base || '/',
+        logo: `${base}/icon.svg`,
         description: 'Private in-browser file conversion tools with zero server file uploads.',
       },
       {
         '@type': 'WebSite',
-        '@id': `${SITE_URL}/#website`,
-        url: SITE_URL,
+        '@id': `${base}/#website`,
+        url: base || '/',
         name: 'Hurrykit',
         description: 'Instant, private in-browser image, audio, and video converter.',
-        publisher: { '@id': `${SITE_URL}/#organization` },
+        publisher: { '@id': `${base}/#organization` },
       },
     ],
   };

@@ -2,19 +2,19 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs';
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://hurrykit.com';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? '';
 
 export const metadata: Metadata = {
   title: 'About Hurrykit — Fast, Private, In-Browser File Tools',
   description:
     'Hurrykit is a suite of modern file conversion tools designed for speed and uncompromising privacy. All processing runs directly in your browser.',
-  alternates: { canonical: `${SITE_URL}/about` },
+  alternates: { canonical: SITE_URL ? `${SITE_URL}/about` : '/about' },
 };
 
 export default function AboutPage() {
   const breadcrumbs = [
-    { name: 'Home', item: SITE_URL },
-    { name: 'About', item: `${SITE_URL}/about` },
+    { name: 'Home', item: SITE_URL || '/' },
+    { name: 'About', item: SITE_URL ? `${SITE_URL}/about` : '/about' },
   ];
 
   return (

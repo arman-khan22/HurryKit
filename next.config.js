@@ -11,7 +11,7 @@ const nextConfig = {
   },
   // Environment variables available at build time
   env: {
-    NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL ?? 'https://hurrykit.com',
+    NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL ?? '',
     NEXT_PUBLIC_ANALYTICS_ID: process.env.NEXT_PUBLIC_ANALYTICS_ID ?? '',
     NEXT_PUBLIC_ENV: process.env.NEXT_PUBLIC_ENV ?? 'development',
   },

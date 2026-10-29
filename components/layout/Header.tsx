@@ -1,9 +1,19 @@
+'use client';
+
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { HUBS } from '@/registry';
 import { SearchBox } from './SearchBox';
 import { ThemeToggleButton } from './ThemeToggleButton';
 
 export function Header() {
+  const pathname = usePathname();
+
+  // On the homepage, the Liquid Sculpture Hero has its own integrated navigation bar
+  if (pathname === '/') {
+    return null;
+  }
+
   return (
     <header className="sticky top-0 z-50 w-full bg-[var(--surface)]/90 backdrop-blur-md border-b border-[var(--border)] transition-colors">
       <div className="container">

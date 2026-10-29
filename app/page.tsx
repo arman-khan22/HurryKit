@@ -3,16 +3,17 @@ import Link from 'next/link';
 import { liveTools, HUBS } from '@/registry';
 import type { Tool } from '@/registry/schema';
 import { HeroQuickConverter } from '@/components/home/HeroQuickConverter';
+import SculptureHero from '@/components/ui/liquid-sculpture-hero';
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://hurrykit.com';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? '';
 
 export const metadata: Metadata = {
   title: 'Hurrykit — Fast, Private File Converter. No Uploads.',
   description:
     'Convert HEIC to JPG, MOV to MP4, WAV to MP3, and 50+ formats directly in your browser. Fast, private, zero server uploads.',
-  alternates: { canonical: SITE_URL },
+  alternates: { canonical: SITE_URL || '/' },
   openGraph: {
-    url: SITE_URL,
+    url: SITE_URL || '/',
     title: 'Hurrykit — Fast, Private File Converter. No Uploads.',
     description: 'Convert images, audio, and video in your browser. Nothing uploaded.',
   },
@@ -130,31 +131,29 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen">
-      {/* 1. HERO SECTION */}
-      <section className="py-12 sm:py-16 md:py-20 border-b border-[var(--border)] bg-[var(--bg)]">
-        <div className="container text-center">
-          {/* Privacy Trust Pill */}
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-[var(--ok-bg)] text-[var(--ok)] border border-[var(--ok-border)] mb-6">
+      {/* Accessible semantic heading for static SEO crawlers and screen readers */}
+      <h1 className="sr-only">Files that never leave — Hurrykit In-Browser File Converter</h1>
+
+      {/* 1. LIQUID SCULPTURE HERO */}
+      <SculptureHero />
+
+      {/* QUICK CONVERT / TOOL SELECTION */}
+      <section id="convert" className="py-14 sm:py-18 bg-[var(--surface)] border-b border-[var(--border)] scroll-mt-6">
+        <div className="container max-w-4xl text-center">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-[var(--ok-bg)] text-[var(--ok)] border border-[var(--ok-border)] mb-4">
             <span className="w-2 h-2 rounded-full bg-[var(--ok)] animate-pulse" aria-hidden="true" />
             Zero Server Uploads · 100% In-Browser WebAssembly
           </div>
-
-          {/* Headline (2 lines max) */}
-          <h1 className="text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-[var(--text)] max-w-4xl mx-auto leading-[1.12] mb-5">
-            Fast, private file conversion.<br className="hidden sm:inline" />
-            <span className="text-[var(--accent)]"> Zero uploads.</span> Purely in your browser.
-          </h1>
-
-          {/* Supporting paragraph */}
-          <p className="text-base sm:text-lg text-[var(--muted)] max-w-2xl mx-auto mb-10 leading-relaxed">
-            Convert HEIC, MOV, MP4, WAV, MP3, and 50+ formats instantly with local WebAssembly. Free forever, no registration, and no file size upload wait.
+          <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[var(--text)] mb-3">
+            Instant In-Browser Conversion
+          </h2>
+          <p className="text-sm sm:text-base text-[var(--muted)] max-w-xl mx-auto mb-8">
+            Drop your files below to start converting immediately. No data ever leaves your device.
           </p>
-
-          {/* Interactive Hero Quick Converter */}
           <HeroQuickConverter />
 
           {/* Stats Bar */}
-          <div className="mt-14 pt-8 border-t border-[var(--border)] max-w-3xl mx-auto grid grid-cols-3 gap-6 text-center">
+          <div className="mt-12 pt-8 border-t border-[var(--border)] max-w-2xl mx-auto grid grid-cols-3 gap-6 text-center">
             <div>
               <p className="text-2xl sm:text-3xl font-extrabold text-[var(--text)]">{allLive.length}+</p>
               <p className="text-xs sm:text-sm font-medium text-[var(--muted)] mt-0.5">Live Converters</p>
@@ -258,7 +257,7 @@ export default function HomePage() {
       </section>
 
       {/* 4. THE INVARIANT GUARANTEE / WHY HURRYKIT */}
-      <section className="py-16 sm:py-20 bg-[var(--surface)] border-b border-[var(--border)]">
+      <section id="how-it-works" className="py-16 sm:py-20 bg-[var(--surface)] border-b border-[var(--border)]">
         <div className="container max-w-5xl">
           <div className="text-center max-w-2xl mx-auto mb-12">
             <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[var(--text)]">

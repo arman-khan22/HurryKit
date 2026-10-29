@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import type { Tool, Format, Department } from '@/registry';
 import { HUBS } from '@/registry';
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://hurrykit.com';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? '';
 
 export interface PageMetadataOptions {
   title: string;
@@ -23,7 +23,7 @@ export function createPageMetadata({
   type = 'website',
 }: PageMetadataOptions): Metadata {
   const cleanPath = path.startsWith('/') ? path : path ? `/${path}` : '';
-  const canonical = `${SITE_URL}${cleanPath}`;
+  const canonical = SITE_URL ? `${SITE_URL}${cleanPath}` : cleanPath;
 
   return {
     title: title.includes('Hurrykit') ? title : `${title} | Hurrykit`,

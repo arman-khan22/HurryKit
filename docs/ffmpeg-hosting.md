@@ -40,18 +40,18 @@ Hurrykit Phase 1 deliberately uses the single-thread core:
 
 ## 3. Object-Store Architecture: Cloudflare R2
 
-The binary files are hosted on **Cloudflare R2** behind a custom CDN subdomain (`cdn.hurrykit.com`).
+The binary files are hosted on **Cloudflare R2** behind a custom CDN subdomain (`cdn.example.com`).
 
 ### Cloudflare R2 Free-Tier Economics
 - **Storage**: 10 GB/month included free (Hurrykit requires <100 MB for all versions).
 - **Class B Operations (Read)**: 10,000,000 requests/month included free.
 - **Egress Fees**: **$0.00 / GB forever** (Cloudflare does not charge data transfer fees for R2).
-- **Edge Caching**: Assets routed through `cdn.hurrykit.com` are cached at 300+ Cloudflare edge data centers globally.
+- **Edge Caching**: Assets routed through `cdn.example.com` are cached at 300+ Cloudflare edge data centers globally.
 
 ### Storage Directory Structure
 Assets are organized in immutable, version-partitioned folders:
 ```
-https://cdn.hurrykit.com/ffmpeg/
+https://cdn.example.com/ffmpeg/
 └── 0.12.10/
     ├── ffmpeg-core.js
     └── ffmpeg-core.wasm
@@ -114,7 +114,7 @@ Return Blobs     ┌────────────────────
                       ▼                    ▼
                  Return Blobs     ┌─────────────────────────────────┐
                  (0 ms latency)   │ Fetch with Streaming Progress   │
-                                  │ Primary: cdn.hurrykit.com       │
+                                  │ Primary: cdn.example.com       │
                                   └─────────────────────────────────┘
                                        │                    │
                                    [Success]             [Failed]
@@ -137,9 +137,9 @@ Return Blobs     ┌────────────────────
 
 ## 6. Multi-CDN Mirror Fallback Matrix
 
-If `cdn.hurrykit.com` is unreachable (e.g., DNS propagation, network glitch, or localized outage), `engines/ffmpeg/assets.ts` automatically steps down through secondary CDN mirrors:
+If `cdn.example.com` is unreachable (e.g., DNS propagation, network glitch, or localized outage), `engines/ffmpeg/assets.ts` automatically steps down through secondary CDN mirrors:
 
-1. **Primary**: `https://cdn.hurrykit.com/ffmpeg/0.12.10/`
+1. **Primary**: `https://cdn.example.com/ffmpeg/0.12.10/`
 2. **Mirror 1**: `https://unpkg.com/@ffmpeg/core@0.12.10/dist/esm/`
 3. **Mirror 2**: `https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.10/dist/esm/`
 
@@ -176,8 +176,8 @@ Create `cors.json`:
 [
   {
     "AllowedOrigins": [
-      "https://hurrykit.com",
-      "https://*.hurrykit.com",
+      "https://example.com",
+      "https://*.example.com",
       "https://*.pages.dev",
       "http://localhost:3000",
       "http://localhost:3001"
@@ -210,4 +210,4 @@ npx wrangler r2 object put hurrykit-cdn/ffmpeg/0.12.10/ffmpeg-core.wasm \
 ```
 
 ### Step 4: Connect Custom Domain in Cloudflare Dashboard
-In the Cloudflare Dashboard: **R2 > hurrykit-cdn > Settings > Custom Domains > Add Custom Domain (`cdn.hurrykit.com`)**.
+In the Cloudflare Dashboard: **R2 > hurrykit-cdn > Settings > Custom Domains > Add Custom Domain (`cdn.example.com`)**.

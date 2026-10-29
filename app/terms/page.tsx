@@ -1,19 +1,19 @@
 import type { Metadata } from 'next';
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs';
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://hurrykit.com';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? '';
 
 export const metadata: Metadata = {
   title: 'Terms of Service | Hurrykit',
   description:
     'Hurrykit Terms of Service. Guidelines for using our browser-based file conversion tools and disclaimer of warranties.',
-  alternates: { canonical: `${SITE_URL}/terms` },
+  alternates: { canonical: SITE_URL ? `${SITE_URL}/terms` : '/terms' },
 };
 
 export default function TermsPage() {
   const breadcrumbs = [
-    { name: 'Home', item: SITE_URL },
-    { name: 'Terms of Service', item: `${SITE_URL}/terms` },
+    { name: 'Home', item: SITE_URL || '/' },
+    { name: 'Terms of Service', item: SITE_URL ? `${SITE_URL}/terms` : '/terms' },
   ];
 
   return (

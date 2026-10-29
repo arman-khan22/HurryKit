@@ -31,8 +31,10 @@ module.exports = {
         error: 'var(--error)',
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
-        mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
+        sans: ['Geist', 'system-ui', '-apple-system', 'sans-serif'],
+        serif: ['Instrument Serif', 'Georgia', 'serif'],
+        accent: ['Instrument Serif', 'Georgia', 'serif'],
+        mono: ['JetBrains Mono', 'Cascadia Code', 'monospace'],
       },
       borderRadius: {
         DEFAULT: '14px',

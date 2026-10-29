@@ -9,7 +9,7 @@ import { SoftwareAppJsonLd, FaqJsonLd } from '@/components/seo/JsonLd';
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs';
 import { ToolHeading, HowItWorks, Prose, Faq, RelatedTools } from '@/components/content';
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://hurrykit.com';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? '';
 
 export const dynamicParams = false;
 
@@ -51,9 +51,9 @@ export default async function ToolPage({
       : 'Video Converter';
 
   const breadcrumbs = [
-    { name: 'Home', item: SITE_URL },
-    { name: deptName, item: `${SITE_URL}/${tool.department}-converter` },
-    { name: tool.seo.primary.toUpperCase(), item: `${SITE_URL}/${tool.slug}` },
+    { name: 'Home', item: SITE_URL || '/' },
+    { name: deptName, item: SITE_URL ? `${SITE_URL}/${tool.department}-converter` : `/${tool.department}-converter` },
+    { name: tool.seo.primary.toUpperCase(), item: SITE_URL ? `${SITE_URL}/${tool.slug}` : `/${tool.slug}` },
   ];
 
   return (
